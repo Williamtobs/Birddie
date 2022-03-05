@@ -6,6 +6,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'matching.dart';
+
 class SearchCriteria extends StatelessWidget {
   final String? title;
   const SearchCriteria({Key? key, this.title}) : super(key: key);
@@ -81,7 +83,7 @@ class SearchCriteria extends StatelessWidget {
               ),
               Center(
                 child: Container(
-                  height: 553,
+                  height: 500,
                   width: 309,
                   decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(30)),
@@ -115,39 +117,12 @@ class SearchCriteria extends StatelessWidget {
                                 color: const Color.fromRGBO(255, 84, 84, 1),
                               )),
                           child: IntrinsicHeight(
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  SizedBox(
-                                    width: 33,height: 16,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 20.0),
-                                      child: TextField(
-                                        textAlign: TextAlign.center,
-                                        keyboardType: TextInputType.number,
-                                        style: GoogleFonts.asap(
-                                          fontSize: 15,
-                                          fontStyle: FontStyle.normal,
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color.fromRGBO(255, 84, 84, 1),
-                                        ),
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          errorBorder: InputBorder.none,
-                                          disabledBorder: InputBorder.none,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const VerticalDivider(color: Color.fromRGBO(255, 84, 84, 1),),
-                                  SizedBox(
-                                    width: 33,height: 16,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SizedBox(
+                                  width: 33,
+                                  height: 16,
                                   child: TextField(
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -155,7 +130,8 @@ class SearchCriteria extends StatelessWidget {
                                       fontSize: 15,
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w700,
-                                      color: const Color.fromRGBO(255, 84, 84, 1),
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
                                     ),
                                     decoration: const InputDecoration(
                                       border: InputBorder.none,
@@ -166,9 +142,32 @@ class SearchCriteria extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                              )
-                                ],
-                              ),
+                                const VerticalDivider(
+                                  color: Color.fromRGBO(255, 84, 84, 1),
+                                ),
+                                SizedBox(
+                                  width: 33,
+                                  height: 16,
+                                  child: TextField(
+                                    textAlign: TextAlign.center,
+                                    keyboardType: TextInputType.number,
+                                    style: GoogleFonts.asap(
+                                      fontSize: 15,
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w700,
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
+                                    ),
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         ),
@@ -312,7 +311,7 @@ class SearchCriteria extends StatelessWidget {
                           height: 23,
                           decoration: BoxDecoration(
                               borderRadius:
-                              const BorderRadius.all(Radius.circular(30)),
+                                  const BorderRadius.all(Radius.circular(30)),
                               border: Border.all(
                                 color: const Color.fromRGBO(255, 84, 84, 1),
                               )),
@@ -321,7 +320,8 @@ class SearchCriteria extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 SizedBox(
-                                  width: 33,height: 16,
+                                  width: 33,
+                                  height: 16,
                                   child: TextField(
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -329,7 +329,8 @@ class SearchCriteria extends StatelessWidget {
                                       fontSize: 15,
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w700,
-                                      color: const Color.fromRGBO(255, 84, 84, 1),
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
                                     ),
                                     decoration: const InputDecoration(
                                       border: InputBorder.none,
@@ -340,9 +341,12 @@ class SearchCriteria extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                const VerticalDivider(color: Color.fromRGBO(255, 84, 84, 1),),
+                                const VerticalDivider(
+                                  color: Color.fromRGBO(255, 84, 84, 1),
+                                ),
                                 SizedBox(
-                                  width: 33,height: 16,
+                                  width: 33,
+                                  height: 16,
                                   child: TextField(
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -350,7 +354,8 @@ class SearchCriteria extends StatelessWidget {
                                       fontSize: 15,
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w700,
-                                      color: const Color.fromRGBO(255, 84, 84, 1),
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
                                     ),
                                     decoration: const InputDecoration(
                                       border: InputBorder.none,
@@ -385,7 +390,7 @@ class SearchCriteria extends StatelessWidget {
                           height: 23,
                           decoration: BoxDecoration(
                               borderRadius:
-                              const BorderRadius.all(Radius.circular(30)),
+                                  const BorderRadius.all(Radius.circular(30)),
                               border: Border.all(
                                 color: const Color.fromRGBO(255, 84, 84, 1),
                               )),
@@ -394,7 +399,8 @@ class SearchCriteria extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 SizedBox(
-                                  width: 33,height: 16,
+                                  width: 33,
+                                  height: 16,
                                   child: TextField(
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -402,7 +408,8 @@ class SearchCriteria extends StatelessWidget {
                                       fontSize: 15,
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w700,
-                                      color: const Color.fromRGBO(255, 84, 84, 1),
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
                                     ),
                                     decoration: const InputDecoration(
                                       border: InputBorder.none,
@@ -413,9 +420,12 @@ class SearchCriteria extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                const VerticalDivider(color: Color.fromRGBO(255, 84, 84, 1),),
+                                const VerticalDivider(
+                                  color: Color.fromRGBO(255, 84, 84, 1),
+                                ),
                                 SizedBox(
-                                  width: 33,height: 16,
+                                  width: 33,
+                                  height: 16,
                                   child: TextField(
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -423,7 +433,8 @@ class SearchCriteria extends StatelessWidget {
                                       fontSize: 15,
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w700,
-                                      color: const Color.fromRGBO(255, 84, 84, 1),
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
                                     ),
                                     decoration: const InputDecoration(
                                       border: InputBorder.none,
@@ -476,13 +487,16 @@ class SearchCriteria extends StatelessWidget {
                           height: 28,
                           width: 138,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Get.to(const Matching());
+                            },
                             child: Text('MATCH ME',
                                 style: GoogleFonts.asap(
                                     fontSize: 13,
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w700,
-                                    color: const Color.fromRGBO(255, 238, 84, 1))),
+                                    color:
+                                        const Color.fromRGBO(255, 238, 84, 1))),
                             style: ElevatedButton.styleFrom(
                               primary: const Color.fromRGBO(255, 84, 84, 1),
                               elevation: 1,

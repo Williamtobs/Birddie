@@ -9,15 +9,18 @@ class TextFields extends StatelessWidget{
   final TextStyle? style;
   final Color? color;
   final Color? fillColor;
+  final Function? functionValidate;
+  final String? Function(String?)? validate;
 
-  const TextFields({Key? key, this.hintText, this.controller, this.inputType, this.style, required this.color, this.fillColor}) : super(key: key);
+  const TextFields({Key? key, this.hintText, this.controller, this.inputType, this.style, required this.color, this.fillColor, this.functionValidate, this.validate}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       textAlign: TextAlign.center,
       keyboardType: inputType,
+      validator: validate,
       style: style,
       decoration: InputDecoration(
         filled: true,
