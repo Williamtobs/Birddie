@@ -7,3 +7,6 @@ const String warning = "assets/warning.png";
 const String play = "assets/play.png";
 const String loading = "assets/loading.png";
 const String attendee = "assets/attendee.png";
+const String match = "assets/matching.png";
+const String backGround = "assets/background.png";
+const String avatar = "assets/avatar.png";

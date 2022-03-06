@@ -6,6 +6,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../Chats/chats_screen.dart';
+import 'Account/upgrade_account_screen.dart';
 import 'Events/event_screens.dart';
 import 'Matching/search_criteria_screen.dart';
 
@@ -18,7 +20,9 @@ class DashBoardScreen extends StatelessWidget {
       backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Get.to(Chats());
+          },
           icon: const Icon(
             Icons.menu_outlined,
             size: 25,
@@ -82,13 +86,13 @@ class DashBoardScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           Get.to(const EventScreen());
                         },
                         child: const Tickets()),
                     const SizedBox(width: 10),
                     GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           Get.to(const EventScreen());
                         },
                         child: const Tickets()),
@@ -97,45 +101,25 @@ class DashBoardScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-            Text('Please choose below', style: GoogleFonts.asap(
-              fontSize: 12,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.w400,
-              color: const Color.fromRGBO(71, 71, 71, 1),
-            )),
+            Text('Please choose below',
+                style: GoogleFonts.asap(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w400,
+                  color: const Color.fromRGBO(71, 71, 71, 1),
+                )),
             const SizedBox(height: 20),
             SizedBox(
               width: 181,
               height: 45,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(const SearchCriteria(title: 'Russian Roulette',));
+                  Get.to(const SearchCriteria(
+                    title: 'Russian Roulette',
+                  ));
                 },
-                child: Text('Russian Roulette',
-                    style: GoogleFonts.asap(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: const Color.fromRGBO(255, 84, 84, 1)),
-                ),
-                style: ElevatedButton.styleFrom(
-                  primary: const Color.fromRGBO(239, 239, 239, 1),
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    side: const BorderSide(
-                      color: Color.fromRGBO(255, 84, 84, 1),
-                    )
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 181,
-              height: 45,
-              child: ElevatedButton(
-                onPressed: () {},
-                child: Text('Sponsored Roulette',
+                child: Text(
+                  'Russian Roulette',
                   style: GoogleFonts.asap(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -148,38 +132,63 @@ class DashBoardScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30.0),
                       side: const BorderSide(
                         color: Color.fromRGBO(255, 84, 84, 1),
-                      )
-                  ),
+                      )),
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            const Divider(
-              color: Color.fromRGBO(255, 84, 84, 0.35)
+            SizedBox(
+              width: 181,
+              height: 45,
+              child: ElevatedButton(
+                onPressed: () {},
+                child: Text(
+                  'Sponsored Roulette',
+                  style: GoogleFonts.asap(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: const Color.fromRGBO(255, 84, 84, 1)),
+                ),
+                style: ElevatedButton.styleFrom(
+                  primary: const Color.fromRGBO(239, 239, 239, 1),
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      side: const BorderSide(
+                        color: Color.fromRGBO(255, 84, 84, 1),
+                      )),
+                ),
+              ),
             ),
             const SizedBox(height: 10),
-            Text('PREMIUM DATES', style: GoogleFonts.asap(
-              fontSize: 15,
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w700,
-              color: const Color.fromRGBO(71, 71, 71, 1),
-            )),
-            Text('These options let you choose a '
-                'date from a list', style: GoogleFonts.asap(
-              fontSize: 10,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.w400,
-              color: const Color.fromRGBO(71, 71, 71, 1),
-            )),
+            const Divider(color: Color.fromRGBO(255, 84, 84, 0.35)),
+            const SizedBox(height: 10),
+            Text('PREMIUM DATES',
+                style: GoogleFonts.asap(
+                  fontSize: 15,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w700,
+                  color: const Color.fromRGBO(71, 71, 71, 1),
+                )),
+            Text(
+                'These options let you choose a '
+                'date from a list',
+                style: GoogleFonts.asap(
+                  fontSize: 10,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w400,
+                  color: const Color.fromRGBO(71, 71, 71, 1),
+                )),
             const SizedBox(height: 10),
             SizedBox(
               width: 181,
               height: 45,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(const SearchCriteria(title: 'Russian Roulette',));
+                  Get.to(const UpgradeAccounts());
                 },
-                child: Text('Instant Roulette',
+                child: Text(
+                  'Instant Roulette',
                   style: GoogleFonts.asap(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -192,8 +201,7 @@ class DashBoardScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30.0),
                       side: const BorderSide(
                         color: Color.fromRGBO(255, 84, 84, 1),
-                      )
-                  ),
+                      )),
                 ),
               ),
             ),
@@ -203,7 +211,8 @@ class DashBoardScreen extends StatelessWidget {
               height: 45,
               child: ElevatedButton(
                 onPressed: () {},
-                child: Text('Match Metrix',
+                child: Text(
+                  'Match Metrix',
                   style: GoogleFonts.asap(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -216,8 +225,7 @@ class DashBoardScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30.0),
                       side: const BorderSide(
                         color: Color.fromRGBO(255, 84, 84, 1),
-                      )
-                  ),
+                      )),
                 ),
               ),
             ),
