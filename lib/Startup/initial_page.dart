@@ -1,5 +1,6 @@
 import 'package:birddie/Constant/validators.dart';
 import 'package:birddie/Startup/second_page.dart';
+import 'package:birddie/Startup/third_page.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -175,6 +176,7 @@ class _InitialPageState extends State<InitialPage> {
     print("verification completed ${authCredential.smsCode}");
     await auth.signInWithCredential(authCredential);
     print(auth.currentUser!.uid);
+    Get.to(const ThirdScreen());
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
           "Phone number automatically verified and user signed in: ${auth.currentUser!.uid}"),
