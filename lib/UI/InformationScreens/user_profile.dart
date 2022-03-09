@@ -49,20 +49,13 @@ class _UserProfileState extends State<UserProfile> {
   Widget build(BuildContext context) {
     uid = auth.currentUser!.uid;
     var users = FirebaseFirestore.instance.collection('users').doc(uid).get();
-    print(users);
     return FutureBuilder<DocumentSnapshot>(
         future: users,
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> data =
                 snapshot.data!.data() as Map<String, dynamic>;
-            print(data);
-            // Reference ref =
-            //     FirebaseStorage.instance.ref().child(data['videoPath']);
-            // print(ref);
-            // vidUrl = ref.getDownloadURL();
             vidUrl = data['videoPath'];
-            print(vidUrl);
             return Scaffold(
                 extendBodyBehindAppBar: true,
                 backgroundColor: const Color.fromRGBO(239, 239, 239, 1),

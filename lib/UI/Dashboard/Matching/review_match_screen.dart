@@ -108,25 +108,50 @@ class ReviewingMatch extends StatelessWidget {
                   const SizedBox(height: 10),
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                              onTap: () {
-                                Get.to(const EventScreen());
-                              },
-                              child: const Tickets()),
-                          const SizedBox(width: 10),
-                          GestureDetector(
-                              onTap: () {
-                                Get.to(const EventScreen());
-                              },
-                              child: const Tickets()),
-                        ],
-                      ),
-                    ),
+                    child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection("Events")
+                            .snapshots(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Text("No available Ticket");
+                          } else if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else {
+                            return SizedBox(
+                              width: 315,
+                              height: 140,
+                              child: ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: snapshot.data?.docs.length,
+                                  shrinkWrap: true,
+                                  itemBuilder: (BuildContext ctxt, int index) {
+                                    DocumentSnapshot<Map<String, dynamic>>
+                                        list = snapshot.data.docs[index];
+                                    print(list.id);
+                                    print(list.data()!['name']);
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Get.to(EventScreen(
+                                          docId: list.id,
+                                        ));
+                                      },
+                                      child: Tickets(
+                                        name: list.data()!['name'],
+                                        location: list.data()!['location'],
+                                        date: list.data()!['date'],
+                                        time: list.data()!['time'],
+                                        price_slang:
+                                            list.data()!['price_slang'],
+                                        slots_book: list.data()!['slot_book'],
+                                      ),
+                                    );
+                                  }),
+                            );
+                          }
+                        }),
                   ),
                   const SizedBox(height: 30),
                   Center(
