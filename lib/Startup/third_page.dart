@@ -24,9 +24,16 @@ class _ThirdScreenState extends State<ThirdScreen> {
   var gender = 'Male';
 
   getNextPage() {
-    if ((_formKey.currentState!.validate())) {
+    if ((_formKey.currentState!.validate()) && terms == true) {
       saveDetails();
-      //Get.to(const InfoScreen());
+      //Get.to(const Inf
+      //oScreen());
+    } else if (!terms) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Accept the terms and condition to proceed'),
+        backgroundColor: Colors.red.shade300,
+      ));
+      return;
     }
   }
 

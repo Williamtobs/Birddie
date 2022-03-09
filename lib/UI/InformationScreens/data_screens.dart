@@ -1,6 +1,8 @@
 import 'package:birddie/UI/InformationScreens/user_profile.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/textfield.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -13,6 +15,7 @@ import 'dart:io';
 
 import '../../Constant/validators.dart';
 import '../../Services/services.dart';
+import '../Shared/dropdown_field.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({Key? key}) : super(key: key);
@@ -33,23 +36,26 @@ class _InfoScreenState extends State<InfoScreen> {
   TextEditingController drink = TextEditingController();
   TextEditingController smoke = TextEditingController();
   //TextEditingController occupation = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   var setup = FirebaseService();
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;
 
   getNextPage() {
-    if ((_formKey.currentState!.validate())) {
-      saveDetails();
-      //Get.to(const InfoScreen());
-    }
+    //if ((_formKey.currentState!.validate())) {
+    addDetails();
+    //Get.to(const InfoScreen());
+    //}
   }
 
   File? _image;
   File? _video;
-
+  String? value;
+  String? areaValue;
   final _formKey = GlobalKey<FormState>();
   final picker = ImagePicker();
+  String? videoPath;
 
   @override
   void dispose() {
@@ -60,6 +66,9 @@ class _InfoScreenState extends State<InfoScreen> {
   @override
   void initState() {
     super.initState();
+    // setState(() {
+    //   list = setup.fetchLocation(1);
+    // });
   }
 
   Future getImage() async {
@@ -68,9 +77,11 @@ class _InfoScreenState extends State<InfoScreen> {
       maxHeight: 161,
       maxWidth: 120,
     );
+
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        setup.uploadImage(_image!);
       } else {
         print('No image selected.');
       }
@@ -84,6 +95,8 @@ class _InfoScreenState extends State<InfoScreen> {
     setState(() {
       if (pickedFile != null) {
         _video = File(pickedFile.path);
+
+        //videoPath = 'videos/$_video';
         _controller = VideoPlayerController.file(_video!);
         _initializeVideoPlayerFuture = _controller?.initialize();
         _controller?.setLooping(true);
@@ -91,10 +104,13 @@ class _InfoScreenState extends State<InfoScreen> {
         print('No Video selected.');
       }
     });
+    videoPath = await setup.uploadVideo(_video!);
+    print(videoPath);
   }
 
   @override
   Widget build(BuildContext context) {
+    //addDetails();
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
@@ -464,19 +480,34 @@ class _InfoScreenState extends State<InfoScreen> {
                           ),
                         ),
                         const SizedBox(height: 3),
-                        SizedBox(
+                        Container(
                           width: 152,
                           height: 27,
-                          child: TextFields(
-                            validate: validateTextField,
-                            controller: state,
-                            //controller: controller,
-                            inputType: TextInputType.text,
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20.0)),
+                              border: Border.all(
+                                color: const Color.fromRGBO(216, 211, 211, 1),
+                                width: 1,
+                              )),
+                          child: DropDownLocation(
+                            //color: const Color.fromRGBO(216, 211, 211, 1),
+                            //items: list!,
+                            onChanged: (value) {
+                              setState(
+                                () {
+                                  areaValue = value as String?;
+                                  print(value);
+                                },
+                              );
+                            },
                             style: GoogleFonts.asap(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w400,
                                 color: const Color.fromRGBO(71, 71, 71, 1)),
-                            color: const Color.fromRGBO(216, 211, 211, 1),
+                            value: areaValue,
+                            //controller: controller,
                           ),
                         ),
                       ],
@@ -496,7 +527,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         Padding(
                           padding: const EdgeInsets.only(left: 4.0),
                           child: Text(
-                            'Region:',
+                            'Religion:',
                             style: GoogleFonts.asap(
                               fontSize: 10,
                               fontStyle: FontStyle.normal,
@@ -539,19 +570,34 @@ class _InfoScreenState extends State<InfoScreen> {
                           ),
                         ),
                         const SizedBox(height: 3),
-                        SizedBox(
+                        Container(
                           width: 152,
                           height: 27,
-                          child: TextFields(
-                            validate: validateTextField,
-                            controller: area,
-                            //controller: controller,
-                            inputType: TextInputType.text,
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20.0)),
+                              border: Border.all(
+                                color: const Color.fromRGBO(216, 211, 211, 1),
+                                width: 1,
+                              )),
+                          child: DropDown(
+                            location: areaValue,
+                            onChanged: (value) {
+                              setState(
+                                () {
+                                  this.value = value as String;
+                                  print(value);
+                                },
+                              );
+                            },
+                            value: value,
                             style: GoogleFonts.asap(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w400,
                                 color: const Color.fromRGBO(71, 71, 71, 1)),
-                            color: const Color.fromRGBO(216, 211, 211, 1),
+                            // R
+                            //controller: controller,
                           ),
                         ),
                       ],
@@ -723,6 +769,8 @@ class _InfoScreenState extends State<InfoScreen> {
   }
 
   Widget _showDialog(BuildContext context) {
+    print(value);
+    print(areaValue);
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(27.0),
@@ -789,16 +837,43 @@ class _InfoScreenState extends State<InfoScreen> {
     );
   }
 
-  saveDetails() async {
-    setup.userDetails(
-        state.text.trim(),
-        occupation.text.trim(),
-        region.text.trim(),
-        area.text.trim(),
-        interest.text.trim(),
-        drink.text.trim(),
-        smoke.text.trim(),
-        _video,
-        _image);
+  Future addDetails() async {
+    var uid = _auth.currentUser?.uid;
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    var doc = users.doc(uid);
+    await doc.update({
+      'occupation': occupation.text.trim(),
+      'area': areaValue,
+      'religion': region.text.trim(),
+      'location': value,
+      'interest': interest.text.trim(),
+      'drink': drink.text.trim(),
+      'smoke': smoke.text.trim(),
+      "video": _video.toString(),
+      'videoPath': videoPath,
+      'image': _image.toString()
+    }).then((value) {
+      print("User Added");
+      Get.to(const UserProfile());
+    }).catchError((error) => print("Failed to add user: $error"));
   }
+
+  // saveDetails() async {
+  //   print(value);
+  //   print(areaValue);
+  //   print(_video);
+  //   // String image = _image as String;
+  //   print(videoPath);
+  //   setup.userDetails(
+  //       areaValue,
+  //       occupation.text.trim(),
+  //       region.text.trim(),
+  //       value,
+  //       interest.text.trim(),
+  //       drink.text.trim(),
+  //       smoke.text.trim(),
+  //       _video,
+  //       videoPath,
+  //       _image);
+  // }
 }

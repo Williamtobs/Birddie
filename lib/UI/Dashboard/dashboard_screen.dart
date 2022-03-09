@@ -114,7 +114,7 @@ class DashBoardScreen extends StatelessWidget {
               height: 45,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(const SearchCriteria(
+                  Get.to(SearchCriteria(
                     title: 'Russian Roulette',
                   ));
                 },
@@ -141,7 +141,11 @@ class DashBoardScreen extends StatelessWidget {
               width: 181,
               height: 45,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(SearchCriteria(
+                    title: 'Sponsored Roulette',
+                  ));
+                },
                 child: Text(
                   'Sponsored Roulette',
                   style: GoogleFonts.asap(
@@ -185,7 +189,10 @@ class DashBoardScreen extends StatelessWidget {
               height: 45,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(const UpgradeAccounts());
+                  Get.to(SearchCriteria(
+                    title: 'Instant Roulette',
+                  ));
+                  //Get.to(const UpgradeAccounts());
                 },
                 child: Text(
                   'Instant Roulette',
@@ -210,7 +217,11 @@ class DashBoardScreen extends StatelessWidget {
               width: 181,
               height: 45,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(SearchCriteria(
+                    title: 'Match Metrix',
+                  ));
+                },
                 child: Text(
                   'Match Metrix',
                   style: GoogleFonts.asap(

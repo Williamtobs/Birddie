@@ -182,6 +182,7 @@ class _SecondPageState extends State<SecondPage> {
         verificationId: widget.verificationId!,
         smsCode: controller.text,
       );
+
       print(credential.token);
       final User user = (await auth.signInWithCredential(credential)).user!;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

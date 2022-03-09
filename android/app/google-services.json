@@ -1,42 +1,42 @@
 {
   "project_info": {
-    "project_number": "194696527469",
-    "project_id": "birddie-77208",
-    "storage_bucket": "birddie-77208.appspot.com"
+    "project_number": "50191103576",
+    "firebase_url": "https://birddie-app-default-rtdb.firebaseio.com",
+    "project_id": "birddie-app",
+    "storage_bucket": "birddie-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:194696527469:android:5bb8b6cbbe2ba5e71a0964",
+        "mobilesdk_app_id": "1:50191103576:android:8168fe7e4919e866c83c2d",
         "android_client_info": {
-          "package_name": "com.example.birddie"
+          "package_name": "com.birddie"
         }
       },
       "oauth_client": [
         {
-          "client_id": "194696527469-n2v5383hk5qkp9dnjpevrq6ft7scgve1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.birddie",
-            "certificate_hash": "a7937f2881c52be32ba23b6f57d129042d044d71"
-          }
-        },
-        {
-          "client_id": "194696527469-4qo07i96qjtfsh1quc7mir2jmclqdill.apps.googleusercontent.com",
+          "client_id": "50191103576-kbsosmkaouqmn3vi18vpk01bepafb9a7.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB3st6DUmkkLgr5NxXJiSza4x2P9GyIt60"
+          "current_key": "AIzaSyARMBZepicKKpnla2Og0bF7puS9lEgkwJU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "194696527469-4qo07i96qjtfsh1quc7mir2jmclqdill.apps.googleusercontent.com",
+              "client_id": "50191103576-kbsosmkaouqmn3vi18vpk01bepafb9a7.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "50191103576-f2ba2rpk10gku57t7qtav1nflf0fhmpv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.birddie"
+              }
             }
           ]
         }

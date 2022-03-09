@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 //import '../Models/user_model.dart';
 import '../Startup/initial_page.dart';
 import '../UI/Dashboard/dashboard_screen.dart';
+import '../UI/InformationScreens/data_screens.dart';
 import '../UI/InformationScreens/user_profile.dart';
 
 class MainScreen extends StatelessWidget {
@@ -26,7 +27,7 @@ class MainScreen extends StatelessWidget {
               child: Text('${snaphot.error}'),
             );
           }
-          return const DashBoardScreen();
+          return const InfoScreen();
         });
   }
 }

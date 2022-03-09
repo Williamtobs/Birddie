@@ -1,5 +1,7 @@
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/textfield.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -10,7 +12,19 @@ import 'matching.dart';
 
 class SearchCriteria extends StatelessWidget {
   final String? title;
-  const SearchCriteria({Key? key, this.title}) : super(key: key);
+  SearchCriteria({Key? key, this.title}) : super(key: key);
+
+  TextEditingController ageFrom = TextEditingController();
+  TextEditingController ageTo = TextEditingController();
+  TextEditingController state = TextEditingController();
+  TextEditingController dateLocation = TextEditingController();
+  TextEditingController dateArea = TextEditingController();
+  TextEditingController dateSetup = TextEditingController();
+  TextEditingController dateFrom = TextEditingController();
+  TextEditingController dateTo = TextEditingController();
+  TextEditingController timeFrom = TextEditingController();
+  TextEditingController timeTo = TextEditingController();
+  TextEditingController spending = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +138,7 @@ class SearchCriteria extends StatelessWidget {
                                   width: 33,
                                   height: 16,
                                   child: TextField(
+                                    controller: ageFrom,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     style: GoogleFonts.asap(
@@ -149,6 +164,7 @@ class SearchCriteria extends StatelessWidget {
                                   width: 33,
                                   height: 16,
                                   child: TextField(
+                                    controller: ageTo,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     style: GoogleFonts.asap(
@@ -190,7 +206,7 @@ class SearchCriteria extends StatelessWidget {
                           width: 181,
                           height: 27,
                           child: TextFields(
-                            //controller: controller,
+                            controller: state,
                             inputType: TextInputType.text,
                             style: GoogleFonts.asap(
                               fontSize: 15,
@@ -220,7 +236,7 @@ class SearchCriteria extends StatelessWidget {
                           width: 181,
                           height: 27,
                           child: TextFields(
-                            //controller: controller,
+                            controller: dateLocation,
                             inputType: TextInputType.text,
                             style: GoogleFonts.asap(
                               fontSize: 15,
@@ -250,7 +266,7 @@ class SearchCriteria extends StatelessWidget {
                           width: 181,
                           height: 27,
                           child: TextFields(
-                            //controller: controller,
+                            controller: dateArea,
                             inputType: TextInputType.text,
                             style: GoogleFonts.asap(
                               fontSize: 15,
@@ -280,7 +296,7 @@ class SearchCriteria extends StatelessWidget {
                           width: 181,
                           height: 27,
                           child: TextFields(
-                            //controller: controller,
+                            controller: dateSetup,
                             inputType: TextInputType.text,
                             style: GoogleFonts.asap(
                               fontSize: 15,
@@ -323,6 +339,7 @@ class SearchCriteria extends StatelessWidget {
                                   width: 33,
                                   height: 16,
                                   child: TextField(
+                                    controller: dateFrom,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     style: GoogleFonts.asap(
@@ -348,6 +365,7 @@ class SearchCriteria extends StatelessWidget {
                                   width: 33,
                                   height: 16,
                                   child: TextField(
+                                    controller: dateTo,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     style: GoogleFonts.asap(
@@ -402,6 +420,7 @@ class SearchCriteria extends StatelessWidget {
                                   width: 33,
                                   height: 16,
                                   child: TextField(
+                                    controller: timeFrom,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     style: GoogleFonts.asap(
@@ -427,6 +446,7 @@ class SearchCriteria extends StatelessWidget {
                                   width: 33,
                                   height: 16,
                                   child: TextField(
+                                    controller: timeTo,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     style: GoogleFonts.asap(
@@ -469,7 +489,7 @@ class SearchCriteria extends StatelessWidget {
                           height: 27,
                           child: TextFields(
                             fillColor: const Color.fromRGBO(239, 239, 239, 1),
-                            //controller: controller,
+                            controller: spending,
                             inputType: TextInputType.text,
                             style: GoogleFonts.asap(
                               fontSize: 15,
@@ -516,5 +536,27 @@ class SearchCriteria extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future addDetails(String category) async {
+    var uid = auth.currentUser?.uid;
+    CollectionReference users = FirebaseFirestore.instance.collection(category);
+    var doc = users.doc(uid);
+    await doc.update({
+      'age_from': int.parse(ageFrom.text.trim()),
+      'age_to': int.parse(ageTo.text.trim()),
+      'state': state.text.trim(),
+      'date_location': dateLocation.text.trim(),
+      'date_area': dateArea.text.trim(),
+      'date_setup': dateSetup.text.trim(),
+      'date': '${dateFrom.text.trim()} - ${dateTo.text.trim()}',
+      'time': '${timeFrom.text.trim()} - ${timeTo.text.trim()}',
+      "spending_guage": spending.text.trim(),
+    }).then((value) {
+      print("Match form Added");
+      //Get.to(const UserProfile());
+    }).catchError((error) => print("Failed to add user: $error"));
   }
 }

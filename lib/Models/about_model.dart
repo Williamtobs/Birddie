@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class AboutModels {
   String? uid;
   String? stateOfOrigin;
@@ -12,6 +10,7 @@ class AboutModels {
   String? alcohol;
   String? smoke;
   File? video;
+  String? videoPath;
   File? image;
 
   AboutModels(
@@ -24,6 +23,7 @@ class AboutModels {
       this.alcohol,
       this.smoke,
       this.video,
+      this.videoPath,
       this.image});
 
   AboutModels.fromJson(Map<String, dynamic> json) {
@@ -36,6 +36,7 @@ class AboutModels {
     alcohol = json['alcohol'];
     smoke = json['smoke'];
     video = json['video'];
+    videoPath = json['videoPath'];
     image = json['image'];
   }
 
@@ -50,6 +51,7 @@ class AboutModels {
     data['alcohol'] = alcohol;
     data['smoke'] = smoke;
     data['video'] = video;
+    data['videoPath'] = videoPath;
     data['image'] = image;
     return data;
   }
