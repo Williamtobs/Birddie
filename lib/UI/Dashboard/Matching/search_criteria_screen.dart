@@ -1,5 +1,9 @@
+import 'package:birddie/UI/Dashboard/Matching/search_match.dart';
+import 'package:birddie/UI/Shared/dropdown_field.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/textfield.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -8,9 +12,34 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'matching.dart';
 
-class SearchCriteria extends StatelessWidget {
+class SearchCriteria extends StatefulWidget {
   final String? title;
-  const SearchCriteria({Key? key, this.title}) : super(key: key);
+  final String? category;
+  SearchCriteria({Key? key, this.title, this.category}) : super(key: key);
+
+  @override
+  State<SearchCriteria> createState() => _SearchCriteriaState();
+}
+
+class _SearchCriteriaState extends State<SearchCriteria> {
+  TextEditingController ageFrom = TextEditingController();
+  TextEditingController ageTo = TextEditingController();
+  TextEditingController state = TextEditingController();
+  TextEditingController dateSetup = TextEditingController();
+  TextEditingController dateFrom = TextEditingController();
+  TextEditingController dateTo = TextEditingController();
+  TextEditingController timeFrom = TextEditingController();
+  TextEditingController timeTo = TextEditingController();
+  TextEditingController spending = TextEditingController();
+
+  String? value;
+  String? areaValue;
+
+  @override
+  void initState() {
+    super.initState();
+    state = TextEditingController(text: 'Lagos');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +85,7 @@ class SearchCriteria extends StatelessWidget {
                     end: Alignment.topCenter,
                   ))),
         ),
-        title: Text('Match Filter $title'),
+        title: Text('Match Filter ${widget.title}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -116,59 +145,63 @@ class SearchCriteria extends StatelessWidget {
                               border: Border.all(
                                 color: const Color.fromRGBO(255, 84, 84, 1),
                               )),
-                          child: IntrinsicHeight(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                SizedBox(
-                                  width: 33,
-                                  height: 16,
-                                  child: TextField(
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    style: GoogleFonts.asap(
-                                      fontSize: 15,
-                                      fontStyle: FontStyle.normal,
-                                      fontWeight: FontWeight.w700,
-                                      color:
-                                          const Color.fromRGBO(255, 84, 84, 1),
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                    ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(
+                                width: 33,
+                                height: 16,
+                                child: TextField(
+                                  controller: ageFrom,
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  style: GoogleFonts.asap(
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color.fromRGBO(255, 84, 84, 1),
+                                  ),
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
                                   ),
                                 ),
-                                const VerticalDivider(
-                                  color: Color.fromRGBO(255, 84, 84, 1),
+                              ),
+                              Text(
+                                '|',
+                                style: GoogleFonts.asap(
+                                  fontSize: 18,
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color.fromRGBO(255, 84, 84, 1),
                                 ),
-                                SizedBox(
-                                  width: 33,
-                                  height: 16,
-                                  child: TextField(
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    style: GoogleFonts.asap(
-                                      fontSize: 15,
-                                      fontStyle: FontStyle.normal,
-                                      fontWeight: FontWeight.w700,
-                                      color:
-                                          const Color.fromRGBO(255, 84, 84, 1),
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                    ),
+                              ),
+                              SizedBox(
+                                width: 33,
+                                height: 16,
+                                child: TextField(
+                                  controller: ageTo,
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  style: GoogleFonts.asap(
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color.fromRGBO(255, 84, 84, 1),
                                   ),
-                                )
-                              ],
-                            ),
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -190,7 +223,8 @@ class SearchCriteria extends StatelessWidget {
                           width: 181,
                           height: 27,
                           child: TextFields(
-                            //controller: controller,
+                            controller: state,
+                            //initialValue: 'Lagos',
                             inputType: TextInputType.text,
                             style: GoogleFonts.asap(
                               fontSize: 15,
@@ -216,19 +250,32 @@ class SearchCriteria extends StatelessWidget {
                         const SizedBox(
                           height: 3,
                         ),
-                        SizedBox(
+                        Container(
                           width: 181,
                           height: 27,
-                          child: TextFields(
-                            //controller: controller,
-                            inputType: TextInputType.text,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20.0)),
+                              border: Border.all(
+                                color: const Color.fromRGBO(255, 84, 84, 1),
+                                width: 1,
+                              )),
+                          child: DropDownLocation(
+                            onChanged: (value) {
+                              setState(
+                                () {
+                                  areaValue = value as String?;
+                                  print(value);
+                                },
+                              );
+                            },
                             style: GoogleFonts.asap(
                               fontSize: 15,
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w400,
                               color: const Color.fromRGBO(255, 84, 84, 1),
                             ),
-                            color: const Color.fromRGBO(255, 84, 84, 1),
+                            value: areaValue,
+                            //controller: controller,
                           ),
                         ),
                         const SizedBox(
@@ -246,19 +293,32 @@ class SearchCriteria extends StatelessWidget {
                         const SizedBox(
                           height: 3,
                         ),
-                        SizedBox(
+                        Container(
                           width: 181,
                           height: 27,
-                          child: TextFields(
-                            //controller: controller,
-                            inputType: TextInputType.text,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20.0)),
+                              border: Border.all(
+                                color: const Color.fromRGBO(255, 84, 84, 1),
+                                width: 1,
+                              )),
+                          child: DropDown(
+                            location: areaValue,
+                            onChanged: (value) {
+                              setState(
+                                () {
+                                  this.value = value as String;
+                                  //print(value);
+                                },
+                              );
+                            },
                             style: GoogleFonts.asap(
                               fontSize: 15,
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w400,
                               color: const Color.fromRGBO(255, 84, 84, 1),
                             ),
-                            color: const Color.fromRGBO(255, 84, 84, 1),
+                            value: value,
                           ),
                         ),
                         const SizedBox(
@@ -280,7 +340,7 @@ class SearchCriteria extends StatelessWidget {
                           width: 181,
                           height: 27,
                           child: TextFields(
-                            //controller: controller,
+                            controller: dateSetup,
                             inputType: TextInputType.text,
                             style: GoogleFonts.asap(
                               fontSize: 15,
@@ -315,59 +375,63 @@ class SearchCriteria extends StatelessWidget {
                               border: Border.all(
                                 color: const Color.fromRGBO(255, 84, 84, 1),
                               )),
-                          child: IntrinsicHeight(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                SizedBox(
-                                  width: 33,
-                                  height: 16,
-                                  child: TextField(
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    style: GoogleFonts.asap(
-                                      fontSize: 15,
-                                      fontStyle: FontStyle.normal,
-                                      fontWeight: FontWeight.w700,
-                                      color:
-                                          const Color.fromRGBO(255, 84, 84, 1),
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                    ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(
+                                width: 33,
+                                height: 16,
+                                child: TextField(
+                                  controller: dateFrom,
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  style: GoogleFonts.asap(
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color.fromRGBO(255, 84, 84, 1),
+                                  ),
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
                                   ),
                                 ),
-                                const VerticalDivider(
-                                  color: Color.fromRGBO(255, 84, 84, 1),
+                              ),
+                              Text(
+                                '|',
+                                style: GoogleFonts.asap(
+                                  fontSize: 18,
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color.fromRGBO(255, 84, 84, 1),
                                 ),
-                                SizedBox(
-                                  width: 33,
-                                  height: 16,
-                                  child: TextField(
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    style: GoogleFonts.asap(
-                                      fontSize: 15,
-                                      fontStyle: FontStyle.normal,
-                                      fontWeight: FontWeight.w700,
-                                      color:
-                                          const Color.fromRGBO(255, 84, 84, 1),
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                    ),
+                              ),
+                              SizedBox(
+                                width: 33,
+                                height: 16,
+                                child: TextField(
+                                  controller: dateTo,
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  style: GoogleFonts.asap(
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color.fromRGBO(255, 84, 84, 1),
                                   ),
-                                )
-                              ],
-                            ),
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -394,59 +458,63 @@ class SearchCriteria extends StatelessWidget {
                               border: Border.all(
                                 color: const Color.fromRGBO(255, 84, 84, 1),
                               )),
-                          child: IntrinsicHeight(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                SizedBox(
-                                  width: 33,
-                                  height: 16,
-                                  child: TextField(
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    style: GoogleFonts.asap(
-                                      fontSize: 15,
-                                      fontStyle: FontStyle.normal,
-                                      fontWeight: FontWeight.w700,
-                                      color:
-                                          const Color.fromRGBO(255, 84, 84, 1),
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                    ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(
+                                width: 33,
+                                height: 16,
+                                child: TextField(
+                                  controller: timeFrom,
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  style: GoogleFonts.asap(
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color.fromRGBO(255, 84, 84, 1),
+                                  ),
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
                                   ),
                                 ),
-                                const VerticalDivider(
-                                  color: Color.fromRGBO(255, 84, 84, 1),
+                              ),
+                              Text(
+                                '|',
+                                style: GoogleFonts.asap(
+                                  fontSize: 18,
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color.fromRGBO(255, 84, 84, 1),
                                 ),
-                                SizedBox(
-                                  width: 33,
-                                  height: 16,
-                                  child: TextField(
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    style: GoogleFonts.asap(
-                                      fontSize: 15,
-                                      fontStyle: FontStyle.normal,
-                                      fontWeight: FontWeight.w700,
-                                      color:
-                                          const Color.fromRGBO(255, 84, 84, 1),
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                    ),
+                              ),
+                              SizedBox(
+                                width: 33,
+                                height: 16,
+                                child: TextField(
+                                  controller: timeTo,
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  style: GoogleFonts.asap(
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color.fromRGBO(255, 84, 84, 1),
                                   ),
-                                )
-                              ],
-                            ),
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -469,7 +537,7 @@ class SearchCriteria extends StatelessWidget {
                           height: 27,
                           child: TextFields(
                             fillColor: const Color.fromRGBO(239, 239, 239, 1),
-                            //controller: controller,
+                            controller: spending,
                             inputType: TextInputType.text,
                             style: GoogleFonts.asap(
                               fontSize: 15,
@@ -488,7 +556,7 @@ class SearchCriteria extends StatelessWidget {
                           width: 138,
                           child: ElevatedButton(
                             onPressed: () {
-                              Get.to(const Matching());
+                              addDetails(widget.category!);
                             },
                             child: Text('MATCH ME',
                                 style: GoogleFonts.asap(
@@ -516,5 +584,29 @@ class SearchCriteria extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future addDetails(String category) async {
+    var uid = auth.currentUser?.uid;
+    CollectionReference users = FirebaseFirestore.instance.collection(category);
+    var doc = users.doc(uid);
+    await doc.set({
+      'age_from': int.parse(ageFrom.text.trim()),
+      'age_to': int.parse(ageTo.text.trim()),
+      'state': state.text.trim(),
+      'date_location': areaValue,
+      'date_area': value,
+      'date_setup': dateSetup.text.trim(),
+      'date': '${dateFrom.text.trim()} - ${dateTo.text.trim()}',
+      'time': '${timeFrom.text.trim()} - ${timeTo.text.trim()}',
+      "spending_guage": spending.text.trim(),
+    }).then((value) {
+      print("Match form Added");
+      Get.to(Search(
+        category: category,
+      ));
+    }).catchError((error) => print("Failed to add user: $error"));
   }
 }

@@ -1,5 +1,7 @@
+import 'package:birddie/UI/Dashboard/Matching/matching.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/tickets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -80,25 +82,49 @@ class DashBoardScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Align(
               alignment: Alignment.centerLeft,
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    GestureDetector(
-                        onTap: () {
-                          Get.to(const EventScreen());
-                        },
-                        child: const Tickets()),
-                    const SizedBox(width: 10),
-                    GestureDetector(
-                        onTap: () {
-                          Get.to(const EventScreen());
-                        },
-                        child: const Tickets()),
-                  ],
-                ),
-              ),
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection("Events")
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Text("No available Ticket");
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else {
+                      return SizedBox(
+                        width: 315,
+                        height: 140,
+                        child: ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data?.docs.length,
+                            shrinkWrap: true,
+                            itemBuilder: (BuildContext ctxt, int index) {
+                              DocumentSnapshot<Map<String, dynamic>> list =
+                                  snapshot.data.docs[index];
+                              print(list.id);
+                              print(list.data()!['name']);
+                              return GestureDetector(
+                                onTap: () {
+                                  Get.to(EventScreen(
+                                    docId: list.id,
+                                  ));
+                                },
+                                child: Tickets(
+                                  name: list.data()!['name'],
+                                  location: list.data()!['location'],
+                                  date: list.data()!['date'],
+                                  time: list.data()!['time'],
+                                  price_slang: list.data()!['price_slang'],
+                                  slots_book: list.data()!['slot_book'],
+                                ),
+                              );
+                            }),
+                      );
+                    }
+                  }),
             ),
             const SizedBox(height: 30),
             Text('Please choose below',
@@ -114,8 +140,9 @@ class DashBoardScreen extends StatelessWidget {
               height: 45,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(const SearchCriteria(
+                  Get.to(SearchCriteria(
                     title: 'Russian Roulette',
+                    category: 'Russian Roulette',
                   ));
                 },
                 child: Text(
@@ -141,7 +168,12 @@ class DashBoardScreen extends StatelessWidget {
               width: 181,
               height: 45,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(SearchCriteria(
+                    title: 'Sponsored Roulette',
+                    category: 'Sponsored Roulette',
+                  ));
+                },
                 child: Text(
                   'Sponsored Roulette',
                   style: GoogleFonts.asap(
@@ -185,7 +217,11 @@ class DashBoardScreen extends StatelessWidget {
               height: 45,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(const UpgradeAccounts());
+                  Get.to(SearchCriteria(
+                    title: 'Instant Roulette',
+                    category: 'Instant Roulette',
+                  ));
+                  //Get.to(const UpgradeAccounts());
                 },
                 child: Text(
                   'Instant Roulette',
@@ -210,7 +246,9 @@ class DashBoardScreen extends StatelessWidget {
               width: 181,
               height: 45,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(const Matching());
+                },
                 child: Text(
                   'Match Metrix',
                   style: GoogleFonts.asap(

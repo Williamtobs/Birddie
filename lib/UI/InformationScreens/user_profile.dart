@@ -4,9 +4,7 @@ import 'package:birddie/Services/services.dart';
 import 'package:birddie/UI/Dashboard/dashboard_screen.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase/firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -23,46 +21,19 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
-  File? video;
+  String? video;
   var _state = false;
   var uid;
+  var vidUrl;
+  var url;
   var service = FirebaseService();
   String? stateOfOrigin, occupation, region, area, lookingFor, alcohol, smoke;
 
-  fetch() async {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    if (_auth.currentUser != null) {
-      uid = _auth.currentUser?.uid;
-      print(uid);
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .get()
-          .then((ds) {
-        occupation = ds.data()?['occupation'];
-        stateOfOrigin = ds.data()?['stateOfOrigin'];
-        region = ds.data()?['region'];
-        area = ds.data()?['area'];
-        lookingFor = ds.data()?['lookingFor'];
-        alcohol = ds.data()?['alcohol'];
-        smoke = ds.data()?['smoke'];
-        video = File(ds.data()?['video']);
-        print(video);
-        //video = ds.data()!['video'] as File;
-        print(occupation);
-      }).catchError((e) {
-        print(e);
-      });
-    }
-  }
+  FirebaseAuth auth = FirebaseAuth.instance;
 
-  @override
-  void initState() {
-    super.initState();
-
-    fetch();
+  Future loadVideo() async {
     _controller = VideoPlayerController.network(
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+      vidUrl,
     );
     _initializeVideoPlayerFuture = _controller.initialize();
   }
@@ -76,14 +47,15 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: fetch(),
-        builder: (context, snapshot) {
+    uid = auth.currentUser!.uid;
+    var users = FirebaseFirestore.instance.collection('users').doc(uid).get();
+    return FutureBuilder<DocumentSnapshot>(
+        future: users,
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            //var doc = snapshot.data;
-            print('here');
-            print(occupation);
-            //video = doc['video']!;
+            Map<String, dynamic> data =
+                snapshot.data!.data() as Map<String, dynamic>;
+            vidUrl = data['videoPath'];
             return Scaffold(
                 extendBodyBehindAppBar: true,
                 backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
@@ -199,42 +171,42 @@ class _UserProfileState extends State<UserProfile> {
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    // If the video is playing, pause it.
-                                    if (_controller.value.isPlaying) {
-                                      _controller.pause();
-                                      _state = !_state;
-                                    } else {
-                                      // If the video is paused, play it.
-                                      _controller.play();
-                                    }
-                                  });
-                                },
-                                child: Container(
-                                    width: 210,
-                                    height: 161,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              255, 84, 84, 1),
-                                          width: 1,
-                                        ),
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(14))),
-                                    child: Stack(
-                                      children: [
-                                        SizedBox(
-                                          width: 210,
-                                          height: 161,
-                                          child: FutureBuilder(
-                                            future:
-                                                _initializeVideoPlayerFuture,
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.done) {
-                                                return Padding(
+                              Container(
+                                  width: 210,
+                                  height: 161,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: const Color.fromRGBO(
+                                            255, 84, 84, 1),
+                                        width: 1,
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(14))),
+                                  child: Stack(
+                                    children: [
+                                      SizedBox(
+                                        width: 210,
+                                        height: 161,
+                                        child: FutureBuilder(
+                                          future: loadVideo(),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.done) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    // If the video is playing, pause it.
+                                                    if (_controller
+                                                        .value.isPlaying) {
+                                                      _controller.pause();
+                                                      _state = !_state;
+                                                    } else {
+                                                      // If the video is paused, play it.
+                                                      _controller.play();
+                                                    }
+                                                  });
+                                                },
+                                                child: Padding(
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: AspectRatio(
@@ -244,46 +216,50 @@ class _UserProfileState extends State<UserProfile> {
                                                     child: VideoPlayer(
                                                         _controller),
                                                   ),
-                                                );
-                                              } else {
-                                                // If the VideoPlayerController is still initializing, show a
-                                                // loading spinner.
-                                                return const Center(
-                                                    child:
-                                                        CircularProgressIndicator());
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                        const Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Icon(
-                                            Icons.verified,
-                                            color: Colors.blue,
-                                            size: 28,
-                                          ),
-                                        ),
-                                        _state
-                                            ? const Align(
-                                                alignment: Alignment.center,
-                                                child: Icon(
-                                                  Icons
-                                                      .pause_circle_filled_outlined,
-                                                  color: Colors.red,
-                                                  size: 28,
                                                 ),
-                                              )
-                                            : const Align(
-                                                alignment: Alignment.center,
-                                                child: Icon(
-                                                  Icons.play_circle,
-                                                  color: Colors.red,
-                                                  size: 28,
-                                                ),
-                                              )
-                                      ],
-                                    )),
-                              ),
+                                              );
+                                            } else if (!snapshot.hasData) {
+                                              // If the VideoPlayerController is still initializing, show a
+                                              // loading spinner.
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            } else {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      const Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Icon(
+                                          Icons.verified,
+                                          color: Colors.blue,
+                                          size: 28,
+                                        ),
+                                      ),
+                                      _state
+                                          ? const Align(
+                                              alignment: Alignment.center,
+                                              child: Icon(
+                                                Icons
+                                                    .pause_circle_filled_outlined,
+                                                color: Colors.red,
+                                                size: 28,
+                                              ),
+                                            )
+                                          : const Align(
+                                              alignment: Alignment.center,
+                                              child: Icon(
+                                                Icons.play_circle,
+                                                color: Colors.red,
+                                                size: 28,
+                                              ),
+                                            )
+                                    ],
+                                  )),
                               const SizedBox(height: 10),
                               SizedBox(
                                 height: 28,
@@ -360,7 +336,7 @@ class _UserProfileState extends State<UserProfile> {
                                         color:
                                             Color.fromRGBO(253, 253, 253, 1)),
                                     child: Text(
-                                      occupation!,
+                                      data['occupation'],
                                       style: GoogleFonts.asap(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w400,
@@ -396,7 +372,7 @@ class _UserProfileState extends State<UserProfile> {
                                         color:
                                             Color.fromRGBO(253, 253, 253, 1)),
                                     child: Text(
-                                      stateOfOrigin!,
+                                      data['area']!,
                                       style: GoogleFonts.asap(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w400,
@@ -420,7 +396,7 @@ class _UserProfileState extends State<UserProfile> {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 4.0),
                                   child: Text(
-                                    'Region:',
+                                    'Religion:',
                                     style: GoogleFonts.asap(
                                       fontSize: 10,
                                       fontStyle: FontStyle.normal,
@@ -441,7 +417,7 @@ class _UserProfileState extends State<UserProfile> {
                                         color:
                                             Color.fromRGBO(253, 253, 253, 1)),
                                     child: Text(
-                                      region!,
+                                      data['religion'],
                                       style: GoogleFonts.asap(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w400,
@@ -477,7 +453,7 @@ class _UserProfileState extends State<UserProfile> {
                                         color:
                                             Color.fromRGBO(253, 253, 253, 1)),
                                     child: Text(
-                                      area!,
+                                      data['location'],
                                       style: GoogleFonts.asap(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w400,
@@ -517,7 +493,7 @@ class _UserProfileState extends State<UserProfile> {
                                         BorderRadius.all(Radius.circular(20.0)),
                                     color: Color.fromRGBO(253, 253, 253, 1)),
                                 child: Text(
-                                  lookingFor!,
+                                  data['interest'],
                                   style: GoogleFonts.asap(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w400,
@@ -580,7 +556,7 @@ class _UserProfileState extends State<UserProfile> {
                                         color:
                                             Color.fromRGBO(253, 253, 253, 1)),
                                     child: Text(
-                                      alcohol!,
+                                      data['drink'],
                                       style: GoogleFonts.asap(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w400,
@@ -616,7 +592,7 @@ class _UserProfileState extends State<UserProfile> {
                                         color:
                                             Color.fromRGBO(253, 253, 253, 1)),
                                     child: Text(
-                                      smoke!,
+                                      data['smoke']!,
                                       style: GoogleFonts.asap(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w400,

@@ -176,7 +176,7 @@ class _InitialPageState extends State<InitialPage> {
     print("verification completed ${authCredential.smsCode}");
     await auth.signInWithCredential(authCredential);
     print(auth.currentUser!.uid);
-    Get.to(const ThirdScreen());
+    Get.off(const ThirdScreen());
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
           "Phone number automatically verified and user signed in: ${auth.currentUser!.uid}"),

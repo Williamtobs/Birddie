@@ -6,9 +6,12 @@ import 'package:birddie/Models/user_model.dart';
 import 'package:birddie/UI/InformationScreens/data_screens.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path/path.dart' as Path;
 
 import '../Data/dummy_data.dart';
 import '../Models/message_model.dart';
@@ -19,6 +22,7 @@ import '../Util/utils.dart';
 class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   var uid;
+  FirebaseStorage storage = FirebaseStorage.instance;
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
 
@@ -68,6 +72,54 @@ class FirebaseService {
       }
     }
   }
+
+  Future<void> uploadImage(File image) async {
+    String fileName = Path.basename(image.path);
+    File imageFile = File(image.path);
+    try {
+      await storage.ref('images/$fileName').putFile(
+          imageFile,
+          SettableMetadata(customMetadata: {
+            'uploaded_by': _auth.currentUser!.uid,
+          }));
+    } on FirebaseException catch (error) {
+      if (kDebugMode) {
+        print(error);
+      }
+    } catch (err) {
+      if (kDebugMode) {
+        print(err);
+      }
+    }
+  }
+
+  Future downoloadVid() async {}
+
+  Future<String> uploadVideo(File image) async {
+    String fileName = Path.basename(image.path);
+    File imageFile = File(image.path);
+    var url;
+    Reference storageReference = storage.ref().child('videos/$fileName');
+    try {
+      UploadTask uploadTask = storageReference.putFile(
+          imageFile,
+          SettableMetadata(customMetadata: {
+            'uploaded_by': _auth.currentUser!.uid,
+          }));
+
+      var imageUrl = await (await uploadTask).ref.getDownloadURL();
+      url = imageUrl.toString();
+    } on FirebaseException catch (error) {
+      if (kDebugMode) {
+        print(error);
+      }
+    } catch (err) {
+      if (kDebugMode) {
+        print(err);
+      }
+    }
+    return url!;
+  }
   // Future<AboutModels> getDetails() async {
   //   List<AboutModels> _list = [];
   //   if (_auth.currentUser != null) {
@@ -88,6 +140,7 @@ class FirebaseService {
       String? alcohol,
       String? smoke,
       File? video,
+      String? videoPath,
       File? image) async {
     if (_auth.currentUser != null) {
       uid = _auth.currentUser?.uid;
@@ -102,17 +155,18 @@ class FirebaseService {
           alcohol: alcohol,
           smoke: smoke,
           video: video,
+          videoPath: videoPath,
           image: image);
 
       DocumentReference documentReferencer = userCollection.doc(uid);
-
+      //print(videoPath);
+      print(videoPath);
       var data = user.toJson();
-      await documentReferencer.set(data).whenComplete(() {
+      await documentReferencer.update(data).whenComplete(() {
         print("User data added");
         Get.to(const UserProfile());
       }).catchError((e) => print(e));
     }
-    return;
   }
 
   Future<void> userSetup(
@@ -136,23 +190,10 @@ class FirebaseService {
       var data = users.toJson();
       await documentReferencer.set(data).whenComplete(() {
         print("User data added");
+
         Get.to(const InfoScreen());
       }).catchError((e) => print(e));
     }
     return;
   }
 }
-
-// ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//       content: Text("Failed to sign in: " + e.toString()),
-//       backgroundColor: Colors.green.shade300,
-//     ));
-// FirebaseAuth auth = FirebaseAuth.instance;
-//     var user = auth.currentUser;
-//     FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
-//       'dateOfBirth': dateOfBirth,
-//       'occupation': occupation,
-//       'gender': gender,
-//       'perm': perm,
-//       'uid': user.uid
-//     });

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:birddie/UI/Dashboard/Matching/matching.dart';
 import 'package:birddie/UI/Dashboard/Matching/review_match_screen.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,28 +9,37 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Search extends StatefulWidget{
-  const Search({Key? key}) : super(key: key);
+class Search extends StatefulWidget {
+  const Search({Key? key, required this.category}) : super(key: key);
+  final String category;
 
   @override
   State<Search> createState() => _SearchState();
 }
 
-class _SearchState extends State<Search> with SingleTickerProviderStateMixin{
-
+class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   AnimationController? controller;
 
   @override
   void initState() {
     super.initState();
-    controller =AnimationController(
+    controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 11),
     );
-    Timer(const Duration(seconds: 5),
-            ()=> Get.to(const ReviewingMatch())
-    );
-    controller!.repeat();
+    Timer(const Duration(seconds: 10), () {
+      controller!.repeat();
+      if (widget.category == 'Match Metrix') {
+        Get.to(const Matching());
+      }
+      Get.to(ReviewingMatch(
+        category: widget.category,
+      ));
+      controller!.repeat();
+    });
+    // Timer(
+    //     const Duration(seconds: 10),
+    //     () =>
     //Get.to(const Matching());
   }
 
@@ -39,7 +49,9 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin{
       backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {Get.back();},
+          onPressed: () {
+            Get.back();
+          },
           icon: const Icon(
             Icons.arrow_back_ios_new_outlined,
             size: 25,
@@ -75,19 +87,25 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin{
                     end: Alignment.topCenter,
                   ))),
         ),
-        title: Text('Matching', style: GoogleFonts.asap(
-          fontSize: 20,
-          fontStyle: FontStyle.normal,
-          fontWeight: FontWeight.w400,
-          color: const Color.fromRGBO(255, 255, 255, 1),
-        )),
+        title: Text('Matching',
+            style: GoogleFonts.asap(
+              fontSize: 20,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w400,
+              color: const Color.fromRGBO(255, 255, 255, 1),
+            )),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
-            child: AnimatedBuilder(animation: controller!,
-                child: Image.asset(match, width: 199, height: 199,),
+            child: AnimatedBuilder(
+                animation: controller!,
+                child: Image.asset(
+                  match,
+                  width: 199,
+                  height: 199,
+                ),
                 builder: (BuildContext context, Widget? _widget) {
                   return Transform.rotate(
                     angle: controller!.value * 4,
@@ -97,39 +115,43 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin{
           ),
           const SizedBox(height: 15),
           Center(
-            child: Text('Analyzing your data', style: GoogleFonts.asap(
-              fontSize: 12,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.w400,
-              color: const Color.fromRGBO(71, 71, 71, 1),
-            )),
+            child: Text('Analyzing your data',
+                style: GoogleFonts.asap(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w400,
+                  color: const Color.fromRGBO(71, 71, 71, 1),
+                )),
           ),
           const SizedBox(height: 5),
           Center(
-            child: Text('Verifying your data', style: GoogleFonts.asap(
-              fontSize: 12,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.w400,
-              color: const Color.fromRGBO(71, 71, 71, 1),
-            )),
+            child: Text('Verifying your data',
+                style: GoogleFonts.asap(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w400,
+                  color: const Color.fromRGBO(71, 71, 71, 1),
+                )),
           ),
           const SizedBox(height: 5),
           Center(
-            child: Text('Submitting your data', style: GoogleFonts.asap(
-              fontSize: 12,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.w400,
-              color: const Color.fromRGBO(71, 71, 71, 1),
-            )),
+            child: Text('Submitting your data',
+                style: GoogleFonts.asap(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w400,
+                  color: const Color.fromRGBO(71, 71, 71, 1),
+                )),
           ),
           const SizedBox(height: 5),
           Center(
-            child: Text('Searching for matches', style: GoogleFonts.asap(
-              fontSize: 12,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.w400,
-              color: const Color.fromRGBO(71, 71, 71, 1),
-            )),
+            child: Text('Searching for matches',
+                style: GoogleFonts.asap(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w400,
+                  color: const Color.fromRGBO(71, 71, 71, 1),
+                )),
           ),
         ],
       ),
