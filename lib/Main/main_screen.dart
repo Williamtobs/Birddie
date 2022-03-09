@@ -27,7 +27,7 @@ class MainScreen extends StatelessWidget {
               child: Text('${snaphot.error}'),
             );
           }
-          return const InfoScreen();
+          return const DashBoardScreen();
         });
   }
 }

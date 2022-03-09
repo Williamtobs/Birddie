@@ -3,7 +3,6 @@ import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -587,7 +586,6 @@ class _InfoScreenState extends State<InfoScreen> {
                               setState(
                                 () {
                                   this.value = value as String;
-                                  print(value);
                                 },
                               );
                             },
@@ -596,8 +594,6 @@ class _InfoScreenState extends State<InfoScreen> {
                                 fontSize: 15,
                                 fontWeight: FontWeight.w400,
                                 color: const Color.fromRGBO(71, 71, 71, 1)),
-                            // R
-                            //controller: controller,
                           ),
                         ),
                       ],
@@ -857,23 +853,4 @@ class _InfoScreenState extends State<InfoScreen> {
       Get.to(const UserProfile());
     }).catchError((error) => print("Failed to add user: $error"));
   }
-
-  // saveDetails() async {
-  //   print(value);
-  //   print(areaValue);
-  //   print(_video);
-  //   // String image = _image as String;
-  //   print(videoPath);
-  //   setup.userDetails(
-  //       areaValue,
-  //       occupation.text.trim(),
-  //       region.text.trim(),
-  //       value,
-  //       interest.text.trim(),
-  //       drink.text.trim(),
-  //       smoke.text.trim(),
-  //       _video,
-  //       videoPath,
-  //       _image);
-  // }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:birddie/UI/Dashboard/Matching/matching.dart';
 import 'package:birddie/UI/Dashboard/Matching/review_match_screen.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +10,8 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Search extends StatefulWidget {
-  const Search({Key? key}) : super(key: key);
+  const Search({Key? key, required this.category}) : super(key: key);
+  final String category;
 
   @override
   State<Search> createState() => _SearchState();
@@ -25,8 +27,19 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: const Duration(seconds: 11),
     );
-    Timer(const Duration(seconds: 10), () => Get.to(const ReviewingMatch()));
-    controller!.repeat();
+    Timer(const Duration(seconds: 10), () {
+      controller!.repeat();
+      if (widget.category == 'Match Metrix') {
+        Get.to(const Matching());
+      }
+      Get.to(ReviewingMatch(
+        category: widget.category,
+      ));
+      controller!.repeat();
+    });
+    // Timer(
+    //     const Duration(seconds: 10),
+    //     () =>
     //Get.to(const Matching());
   }
 

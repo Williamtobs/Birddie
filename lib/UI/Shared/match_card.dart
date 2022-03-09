@@ -6,21 +6,28 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 
-class MatchCard extends StatefulWidget{
+class MatchCard extends StatefulWidget {
   final String? name;
   final String? job;
   final String? age;
   final String? location;
   final String? matchCriteria;
   final String? video;
-  const MatchCard({Key? key, this.name, this.job, this.location, this.matchCriteria, this.video, this.age}) : super(key: key);
+  const MatchCard(
+      {Key? key,
+      this.name,
+      this.job,
+      this.location,
+      this.matchCriteria,
+      this.video,
+      this.age})
+      : super(key: key);
 
   @override
   State<MatchCard> createState() => _MatchCardState();
 }
 
 class _MatchCardState extends State<MatchCard> {
-
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
 
@@ -75,13 +82,11 @@ class _MatchCardState extends State<MatchCard> {
                 child: FutureBuilder(
                   future: _initializeVideoPlayerFuture,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState ==
-                        ConnectionState.done) {
+                    if (snapshot.connectionState == ConnectionState.done) {
                       return Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: AspectRatio(
-                          aspectRatio:
-                          _controller.value.aspectRatio,
+                          aspectRatio: _controller.value.aspectRatio,
                           // Use the VideoPlayer widget to display the video.
                           child: VideoPlayer(_controller),
                         ),
@@ -89,8 +94,7 @@ class _MatchCardState extends State<MatchCard> {
                     } else {
                       // If the VideoPlayerController is still initializing, show a
                       // loading spinner.
-                      return const Center(
-                          child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                   },
                 ),
@@ -101,7 +105,7 @@ class _MatchCardState extends State<MatchCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(width: 10),
-                Text(widget.name! +' '+ widget.age!,
+                Text(widget.name! + ' ' + widget.age!,
                     style: GoogleFonts.asap(
                       fontSize: 16,
                       fontStyle: FontStyle.normal,
@@ -132,7 +136,9 @@ class _MatchCardState extends State<MatchCard> {
                           fontWeight: FontWeight.w600,
                           color: const Color.fromRGBO(255, 255, 255, 1),
                         )),
-                    const SizedBox(width: 5,),
+                    const SizedBox(
+                      width: 5,
+                    ),
                     Text(widget.matchCriteria!,
                         style: GoogleFonts.asap(
                           fontSize: 20,
@@ -142,15 +148,20 @@ class _MatchCardState extends State<MatchCard> {
                         )),
                   ],
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(
+                  height: 10,
+                ),
                 Align(
-                  alignment: Alignment.bottomRight,
-                  child: SizedBox(
+                    alignment: Alignment.bottomRight,
+                    child: SizedBox(
                       width: 76,
                       height: 18,
                       child: ElevatedButton(
-                        onPressed: () {Get.to(const Search());},
-                        child: Text('Match Me',
+                        onPressed: () {
+                          //Get.to(const Search());
+                        },
+                        child: Text(
+                          'Match',
                           style: GoogleFonts.asap(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
@@ -163,12 +174,10 @@ class _MatchCardState extends State<MatchCard> {
                               borderRadius: BorderRadius.circular(30.0),
                               side: const BorderSide(
                                 color: Color.fromRGBO(255, 238, 84, 1),
-                              )
-                          ),
+                              )),
                         ),
                       ),
-                )
-                )
+                    ))
               ],
             )
           ],

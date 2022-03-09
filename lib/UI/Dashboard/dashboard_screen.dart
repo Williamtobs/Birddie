@@ -116,6 +116,7 @@ class DashBoardScreen extends StatelessWidget {
                 onPressed: () {
                   Get.to(SearchCriteria(
                     title: 'Russian Roulette',
+                    category: 'Russian Roulette',
                   ));
                 },
                 child: Text(
@@ -144,6 +145,7 @@ class DashBoardScreen extends StatelessWidget {
                 onPressed: () {
                   Get.to(SearchCriteria(
                     title: 'Sponsored Roulette',
+                    category: 'Sponsored Roulette',
                   ));
                 },
                 child: Text(
@@ -191,6 +193,7 @@ class DashBoardScreen extends StatelessWidget {
                 onPressed: () {
                   Get.to(SearchCriteria(
                     title: 'Instant Roulette',
+                    category: 'Instant Roulette',
                   ));
                   //Get.to(const UpgradeAccounts());
                 },

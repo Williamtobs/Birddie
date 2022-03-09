@@ -169,21 +169,6 @@ class FirebaseService {
     }
   }
 
-  // Future<List<String>> fetchLocation(int index) async {
-  //   FirebaseFirestore collect = FirebaseFirestore.instance;
-  //   List<String> items = [];
-  //   CollectionReference location = collect.collection('States');
-  //   DocumentSnapshot snap = await location.doc('ukOBOkAZ6XyvcXfOeeGf').get();
-  //   var data = snap.data() as Map;
-  //   var statesData = data[index];
-  //   print(statesData);
-  //   for (var element in statesData) {
-  //     print(element);
-  //     items.add(element);
-  //   }
-  //   return items;
-  // }
-
   Future<void> userSetup(
     String dateOfBirth,
     String occupation,
@@ -212,17 +197,3 @@ class FirebaseService {
     return;
   }
 }
-
-// ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//       content: Text("Failed to sign in: " + e.toString()),
-//       backgroundColor: Colors.green.shade300,
-//     ));
-// FirebaseAuth auth = FirebaseAuth.instance;
-//     var user = auth.currentUser;
-//     FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
-//       'dateOfBirth': dateOfBirth,
-//       'occupation': occupation,
-//       'gender': gender,
-//       'perm': perm,
-//       'uid': user.uid
-//     });
