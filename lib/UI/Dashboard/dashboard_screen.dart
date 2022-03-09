@@ -1,3 +1,4 @@
+import 'package:birddie/UI/Dashboard/Matching/matching.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/tickets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -246,9 +247,7 @@ class DashBoardScreen extends StatelessWidget {
               height: 45,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(SearchCriteria(
-                    title: 'Match Metrix',
-                  ));
+                  Get.to(const Matching());
                 },
                 child: Text(
                   'Match Metrix',
