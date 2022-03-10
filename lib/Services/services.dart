@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:birddie/Models/about_model.dart';
 import 'package:birddie/Models/user_model.dart';
+import 'package:birddie/Startup/initial_page.dart';
 import 'package:birddie/UI/InformationScreens/data_screens.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -73,15 +74,19 @@ class FirebaseService {
     }
   }
 
-  Future<void> uploadImage(File image) async {
+  Future<String> uploadImage(File image) async {
     String fileName = Path.basename(image.path);
     File imageFile = File(image.path);
+    var url;
+    Reference storageReference = storage.ref().child('images/$fileName');
     try {
-      await storage.ref('images/$fileName').putFile(
+      UploadTask uploadTask = storageReference.putFile(
           imageFile,
           SettableMetadata(customMetadata: {
             'uploaded_by': _auth.currentUser!.uid,
           }));
+      var imageUrl = await (await uploadTask).ref.getDownloadURL();
+      url = imageUrl.toString();
     } on FirebaseException catch (error) {
       if (kDebugMode) {
         print(error);
@@ -91,6 +96,7 @@ class FirebaseService {
         print(err);
       }
     }
+    return url;
   }
 
   Future downoloadVid() async {}
@@ -130,6 +136,15 @@ class FirebaseService {
   //       }
   //     });
   //   }
+
+  Future<void> signOut() async {
+    await _auth.signOut().then((value) => {
+          Get.offAll(
+            const InitialPage(),
+            predicate: (route) => false,
+          )
+        });
+  }
 
   Future<void> userDetails(
       String? stateOfOrigin,
@@ -172,6 +187,7 @@ class FirebaseService {
   Future<void> userSetup(
     String dateOfBirth,
     String occupation,
+    String name,
     String gender,
     bool perm,
   ) async {
@@ -184,6 +200,7 @@ class FirebaseService {
         uid: uid,
         dateOfBirth: dateOfBirth,
         occupation: occupation,
+        name: name,
         gender: gender,
         perm: perm,
       );

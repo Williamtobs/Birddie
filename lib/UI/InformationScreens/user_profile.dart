@@ -36,8 +36,14 @@ class _UserProfileState extends State<UserProfile> {
   String? videoPath;
   File? _video;
 
+  @override
+  initState() {
+    super.initState;
+    loadVideo();
+  }
+
   Future loadVideo() async {
-    _controller = VideoPlayerController.network(
+    _controller = await VideoPlayerController.network(
       vidUrl,
     );
     _initializeVideoPlayerFuture = _controller.initialize();
@@ -59,7 +65,6 @@ class _UserProfileState extends State<UserProfile> {
     setState(() {
       if (pickedFile != null) {
         _video = File(pickedFile.path);
-        //videoPath = 'videos/$_video';
         videoReplace = true;
         _controller = VideoPlayerController.file(_video!);
         _initializeVideoPlayerFuture = _controller.initialize();
@@ -80,6 +85,7 @@ class _UserProfileState extends State<UserProfile> {
         future: users,
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
+            loadVideo();
             Map<String, dynamic> data =
                 snapshot.data!.data() as Map<String, dynamic>;
             vidUrl = data['videoPath'];

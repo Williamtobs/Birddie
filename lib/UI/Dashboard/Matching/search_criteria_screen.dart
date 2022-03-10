@@ -604,6 +604,12 @@ class _SearchCriteriaState extends State<SearchCriteria> {
       Get.to(Search(
         category: category,
       ));
-    }).catchError((error) => print("Failed to add user: $error"));
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Failed to add use case: $error"),
+        backgroundColor: Colors.red.shade300,
+      ));
+      print("Failed to add user: $error");
+    });
   }
 }

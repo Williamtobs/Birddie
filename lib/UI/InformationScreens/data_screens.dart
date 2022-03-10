@@ -26,7 +26,6 @@ class InfoScreen extends StatefulWidget {
 class _InfoScreenState extends State<InfoScreen> {
   bool imageUpload = false;
 
-  //TextEditingController
   TextEditingController occupation = TextEditingController();
   TextEditingController state = TextEditingController();
   TextEditingController region = TextEditingController();
@@ -34,7 +33,6 @@ class _InfoScreenState extends State<InfoScreen> {
   TextEditingController interest = TextEditingController();
   TextEditingController drink = TextEditingController();
   TextEditingController smoke = TextEditingController();
-  //TextEditingController occupation = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   var setup = FirebaseService();
@@ -55,6 +53,7 @@ class _InfoScreenState extends State<InfoScreen> {
   final _formKey = GlobalKey<FormState>();
   final picker = ImagePicker();
   String? videoPath;
+  String? imagePath;
 
   @override
   void dispose() {
@@ -80,11 +79,13 @@ class _InfoScreenState extends State<InfoScreen> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
-        setup.uploadImage(_image!);
+        //setup.uploadImage(_image!);
       } else {
         print('No image selected.');
       }
     });
+    imagePath = await setup.uploadImage(_image!);
+    print(imagePath);
   }
 
   Future getVideo() async {
@@ -842,6 +843,7 @@ class _InfoScreenState extends State<InfoScreen> {
       'smoke': smoke.text.trim(),
       "video": _video.toString(),
       'videoPath': videoPath,
+      'imagePath': imagePath,
       'image': _image.toString()
     }).then((value) {
       print("User Added");

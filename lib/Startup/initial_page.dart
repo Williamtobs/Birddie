@@ -182,24 +182,6 @@ class _InitialPageState extends State<InitialPage> {
           "Phone number automatically verified and user signed in: ${auth.currentUser!.uid}"),
       backgroundColor: Colors.green.shade300,
     ));
-    // User? user = FirebaseAuth.instance.currentUser;
-    // setState(() {
-    //   controller.text = authCredential.smsCode!;
-    // });
-    // if (authCredential.smsCode != null) {
-    //   try{
-    //     UserCredential credential =
-    //     await user!.linkWithCredential(authCredential);
-    //   }on FirebaseAuthException catch(e){
-    //     if(e.code == 'provider-already-linked'){
-    //       await auth.signInWithCredential(authCredential);
-    //     }
-    //   }
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    //   Get.to(const ThirdScreen());
-    //}
   }
 
   _onVerificationFailed(FirebaseAuthException exception) {
