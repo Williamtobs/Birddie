@@ -90,12 +90,9 @@ class _InfoScreenState extends State<InfoScreen> {
   Future getVideo() async {
     var pickedFile = (await picker.pickVideo(
         source: ImageSource.gallery, maxDuration: const Duration(seconds: 60)));
-    //pickedFile.then((value) => null)
     setState(() {
       if (pickedFile != null) {
         _video = File(pickedFile.path);
-
-        //videoPath = 'videos/$_video';
         _controller = VideoPlayerController.file(_video!);
         _initializeVideoPlayerFuture = _controller?.initialize();
         _controller?.setLooping(true);
@@ -288,8 +285,6 @@ class _InfoScreenState extends State<InfoScreen> {
                                             ),
                                           );
                                         } else {
-                                          // If the VideoPlayerController is still initializing, show a
-                                          // loading spinner.
                                           return const Center(
                                               child:
                                                   CircularProgressIndicator());

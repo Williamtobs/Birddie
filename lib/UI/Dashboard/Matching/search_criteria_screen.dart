@@ -4,13 +4,10 @@ import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'matching.dart';
 
 class SearchCriteria extends StatefulWidget {
   final String? title;

@@ -53,15 +53,10 @@ class _DropDownState extends State<DropDown> {
                         (val) => DropdownMenuItem(value: val, child: Text(val)))
                     .toList(),
                 onChanged: widget.onChanged,
-                // (value) {
-                //   setState(
-                //     () {
-                //       widget.value = value as String?;
-                //       print(value);
-                //     },
-                //   );
-                // },
-                hint: const Text('Resident'), //onChanged: onChanged
+                hint: const Text(
+                  'Resident',
+                  textAlign: TextAlign.center,
+                ), //onChanged: onChanged
               ),
             );
           } else {
@@ -124,8 +119,6 @@ class _DropDownStateLocation extends State<DropDownLocation> {
 
   @override
   Widget build(BuildContext context) {
-    //Rfetct();
-
     return FutureBuilder(
         future: fetct(),
         builder: (context, snapshot) {
@@ -140,7 +133,8 @@ class _DropDownStateLocation extends State<DropDownLocation> {
                         (val) => DropdownMenuItem(value: val, child: Text(val)))
                     .toList(),
                 onChanged: widget.onChanged,
-                hint: const Text('Area'), //onChanged: onChanged
+                hint: const Text('Area',
+                    textAlign: TextAlign.center), //onChanged: onChanged
               ),
             );
           } else {

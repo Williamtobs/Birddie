@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
 class UserProfile extends StatefulWidget {
@@ -26,10 +27,14 @@ class _UserProfileState extends State<UserProfile> {
   var uid;
   var vidUrl;
   var url;
+  var setup = FirebaseService();
   var service = FirebaseService();
   String? stateOfOrigin, occupation, region, area, lookingFor, alcohol, smoke;
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  final picker = ImagePicker();
+  String? videoPath;
+  File? _video;
 
   Future loadVideo() async {
     _controller = VideoPlayerController.network(
@@ -43,6 +48,28 @@ class _UserProfileState extends State<UserProfile> {
     // Ensure disposing of the VideoPlayerController to free up resources.
     _controller.dispose();
     super.dispose();
+  }
+
+  bool videoReplace = false;
+
+  Future getVideo() async {
+    var pickedFile = (await picker.pickVideo(
+        source: ImageSource.gallery, maxDuration: const Duration(seconds: 60)));
+    //pickedFile.then((value) => null)
+    setState(() {
+      if (pickedFile != null) {
+        _video = File(pickedFile.path);
+        //videoPath = 'videos/$_video';
+        videoReplace = true;
+        _controller = VideoPlayerController.file(_video!);
+        _initializeVideoPlayerFuture = _controller.initialize();
+        _controller.setLooping(true);
+      } else {
+        print('No Video selected.');
+      }
+    });
+    videoPath = await setup.uploadVideo(_video!);
+    print(videoPath);
   }
 
   @override
@@ -187,50 +214,83 @@ class _UserProfileState extends State<UserProfile> {
                                       SizedBox(
                                         width: 210,
                                         height: 161,
-                                        child: FutureBuilder(
-                                          future: loadVideo(),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.done) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    // If the video is playing, pause it.
-                                                    if (_controller
-                                                        .value.isPlaying) {
-                                                      _controller.pause();
-                                                      _state = !_state;
-                                                    } else {
-                                                      // If the video is paused, play it.
-                                                      _controller.play();
-                                                    }
-                                                  });
+                                        child: _controller != null
+                                            ? FutureBuilder(
+                                                future:
+                                                    _initializeVideoPlayerFuture,
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.done) {
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              5.0),
+                                                      child: AspectRatio(
+                                                        aspectRatio: _controller
+                                                            .value.aspectRatio,
+                                                        // Use the VideoPlayer widget to display the video.
+                                                        child: VideoPlayer(
+                                                            _controller),
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    // If the VideoPlayerController is still initializing, show a
+                                                    // loading spinner.
+                                                    return const Center(
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  }
                                                 },
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: AspectRatio(
-                                                    aspectRatio: _controller
-                                                        .value.aspectRatio,
-                                                    // Use the VideoPlayer widget to display the video.
-                                                    child: VideoPlayer(
-                                                        _controller),
-                                                  ),
-                                                ),
-                                              );
-                                            } else if (!snapshot.hasData) {
-                                              // If the VideoPlayerController is still initializing, show a
-                                              // loading spinner.
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator());
-                                            } else {
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator());
-                                            }
-                                          },
-                                        ),
+                                              )
+                                            : FutureBuilder(
+                                                future: loadVideo(),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.done) {
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          // If the video is playing, pause it.
+                                                          if (_controller.value
+                                                              .isPlaying) {
+                                                            _controller.pause();
+                                                            _state = !_state;
+                                                          } else {
+                                                            // If the video is paused, play it.
+                                                            _controller.play();
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5.0),
+                                                        child: AspectRatio(
+                                                          aspectRatio:
+                                                              _controller.value
+                                                                  .aspectRatio,
+                                                          // Use the VideoPlayer widget to display the video.
+                                                          child: VideoPlayer(
+                                                              _controller),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  } else if (!snapshot
+                                                      .hasData) {
+                                                    // If the VideoPlayerController is still initializing, show a
+                                                    // loading spinner.
+                                                    return const Center(
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  } else {
+                                                    return const Center(
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  }
+                                                },
+                                              ),
                                       ),
                                       const Align(
                                         alignment: Alignment.topLeft,
@@ -266,6 +326,7 @@ class _UserProfileState extends State<UserProfile> {
                                 width: 138,
                                 child: ElevatedButton(
                                   onPressed: () {
+                                    getVideo();
                                     //getNextPage();
                                   },
                                   child: Text('REPLACE VIDEO',
@@ -611,7 +672,9 @@ class _UserProfileState extends State<UserProfile> {
                           width: 138,
                           child: ElevatedButton(
                             onPressed: () {
-                              Get.to(const DashBoardScreen());
+                              _controller != null
+                                  ? addDetails()
+                                  : Get.to(const DashBoardScreen());
                             },
                             child: Text('SAVE',
                                 style: GoogleFonts.asap(
@@ -643,5 +706,18 @@ class _UserProfileState extends State<UserProfile> {
                     child: CircularProgressIndicator(color: Colors.redAccent)));
           }
         });
+  }
+
+  Future addDetails() async {
+    var uid = auth.currentUser?.uid;
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    var doc = users.doc(uid);
+    await doc.update({
+      "video": _video.toString(),
+      'videoPath': videoPath,
+    }).then((value) {
+      print("Video updated");
+      Get.to(const DashBoardScreen());
+    }).catchError((error) => print("Failed to add user: $error"));
   }
 }
