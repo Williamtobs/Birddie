@@ -1,3 +1,4 @@
+import 'package:birddie/UI/Dashboard/Drawer/side_drawer.dart';
 import 'package:birddie/UI/Dashboard/Events/event_screens.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/tickets.dart';
@@ -15,15 +16,8 @@ class MatchDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
+      drawer: SideDrawer(),
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.menu_outlined,
-            size: 25,
-            color: Color.fromRGBO(255, 255, 255, 1),
-          ),
-        ),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(34),

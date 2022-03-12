@@ -20,8 +20,8 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
+  VideoPlayerController? _controller;
+  Future<void>? _initializeVideoPlayerFuture;
   String? video;
   var _state = false;
   var uid;
@@ -46,13 +46,13 @@ class _UserProfileState extends State<UserProfile> {
     _controller = await VideoPlayerController.network(
       vidUrl,
     );
-    _initializeVideoPlayerFuture = _controller.initialize();
+    _initializeVideoPlayerFuture = _controller!.initialize();
   }
 
   @override
   void dispose() {
     // Ensure disposing of the VideoPlayerController to free up resources.
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -67,8 +67,8 @@ class _UserProfileState extends State<UserProfile> {
         _video = File(pickedFile.path);
         videoReplace = true;
         _controller = VideoPlayerController.file(_video!);
-        _initializeVideoPlayerFuture = _controller.initialize();
-        _controller.setLooping(true);
+        _initializeVideoPlayerFuture = _controller!.initialize();
+        _controller!.setLooping(true);
       } else {
         print('No Video selected.');
       }
@@ -233,11 +233,12 @@ class _UserProfileState extends State<UserProfile> {
                                                           const EdgeInsets.all(
                                                               5.0),
                                                       child: AspectRatio(
-                                                        aspectRatio: _controller
-                                                            .value.aspectRatio,
+                                                        aspectRatio:
+                                                            _controller!.value
+                                                                .aspectRatio,
                                                         // Use the VideoPlayer widget to display the video.
                                                         child: VideoPlayer(
-                                                            _controller),
+                                                            _controller!),
                                                       ),
                                                     );
                                                   } else {
@@ -259,13 +260,14 @@ class _UserProfileState extends State<UserProfile> {
                                                       onTap: () {
                                                         setState(() {
                                                           // If the video is playing, pause it.
-                                                          if (_controller.value
+                                                          if (_controller!.value
                                                               .isPlaying) {
-                                                            _controller.pause();
+                                                            _controller!
+                                                                .pause();
                                                             _state = !_state;
                                                           } else {
                                                             // If the video is paused, play it.
-                                                            _controller.play();
+                                                            _controller!.play();
                                                           }
                                                         });
                                                       },
@@ -275,11 +277,11 @@ class _UserProfileState extends State<UserProfile> {
                                                                 .all(5.0),
                                                         child: AspectRatio(
                                                           aspectRatio:
-                                                              _controller.value
+                                                              _controller!.value
                                                                   .aspectRatio,
                                                           // Use the VideoPlayer widget to display the video.
                                                           child: VideoPlayer(
-                                                              _controller),
+                                                              _controller!),
                                                         ),
                                                       ),
                                                     );
@@ -439,7 +441,7 @@ class _UserProfileState extends State<UserProfile> {
                                         color:
                                             Color.fromRGBO(253, 253, 253, 1)),
                                     child: Text(
-                                      data['area']!,
+                                      data['state']!,
                                       style: GoogleFonts.asap(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w400,
@@ -463,7 +465,7 @@ class _UserProfileState extends State<UserProfile> {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 4.0),
                                   child: Text(
-                                    'Religion:',
+                                    'Region:',
                                     style: GoogleFonts.asap(
                                       fontSize: 10,
                                       fontStyle: FontStyle.normal,
@@ -484,7 +486,7 @@ class _UserProfileState extends State<UserProfile> {
                                         color:
                                             Color.fromRGBO(253, 253, 253, 1)),
                                     child: Text(
-                                      data['religion'],
+                                      data['area'],
                                       style: GoogleFonts.asap(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w400,

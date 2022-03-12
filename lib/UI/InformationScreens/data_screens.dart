@@ -48,8 +48,10 @@ class _InfoScreenState extends State<InfoScreen> {
 
   File? _image;
   File? _video;
+  var iden;
   String? value;
   String? areaValue;
+  String? stateValue;
   final _formKey = GlobalKey<FormState>();
   final picker = ImagePicker();
   String? videoPath;
@@ -60,6 +62,8 @@ class _InfoScreenState extends State<InfoScreen> {
     _controller?.dispose();
     super.dispose();
   }
+
+
 
   @override
   void initState() {
@@ -486,13 +490,14 @@ class _InfoScreenState extends State<InfoScreen> {
                                 color: const Color.fromRGBO(216, 211, 211, 1),
                                 width: 1,
                               )),
-                          child: DropDownLocation(
+                          child: DropDownAreaSelect(
+                            iden: iden,
                             //color: const Color.fromRGBO(216, 211, 211, 1),
                             //items: list!,
                             onChanged: (value) {
                               setState(
                                 () {
-                                  areaValue = value as String?;
+                                  stateValue = value as String?;
                                   print(value);
                                 },
                               );
@@ -501,7 +506,7 @@ class _InfoScreenState extends State<InfoScreen> {
                                 fontSize: 15,
                                 fontWeight: FontWeight.w400,
                                 color: const Color.fromRGBO(71, 71, 71, 1)),
-                            value: areaValue,
+                            value: stateValue,
                             //controller: controller,
                           ),
                         ),
@@ -522,7 +527,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         Padding(
                           padding: const EdgeInsets.only(left: 4.0),
                           child: Text(
-                            'Religion:',
+                            'Region:',
                             style: GoogleFonts.asap(
                               fontSize: 10,
                               fontStyle: FontStyle.normal,
@@ -532,19 +537,36 @@ class _InfoScreenState extends State<InfoScreen> {
                           ),
                         ),
                         const SizedBox(height: 3),
-                        SizedBox(
+                        Container(
                           width: 152,
                           height: 27,
-                          child: TextFields(
-                            validate: validateTextField,
-                            controller: region,
-                            //controller: controller,
-                            inputType: TextInputType.text,
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                              const BorderRadius.all(Radius.circular(20.0)),
+                              border: Border.all(
+                                color: const Color.fromRGBO(216, 211, 211, 1),
+                                width: 1,
+                              )),
+                          child: DropDownLocation(
+                            iden: iden,
+                              location: stateValue,
+                            //color: const Color.fromRGBO(216, 211, 211, 1),
+                            //items: list!,
+                            onChanged: (value) {
+                              setState(
+                                    () {
+                                  areaValue = value as String?;
+                                  print(value);
+                                },
+                              );
+                            },
                             style: GoogleFonts.asap(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w400,
                                 color: const Color.fromRGBO(71, 71, 71, 1)),
-                            color: const Color.fromRGBO(216, 211, 211, 1),
+                            value: areaValue,
+                            //controller: controller,
                           ),
                         ),
                       ],
@@ -578,6 +600,7 @@ class _InfoScreenState extends State<InfoScreen> {
                               )),
                           child: DropDown(
                             location: areaValue,
+                            location2: stateValue,
                             onChanged: (value) {
                               setState(
                                 () {
@@ -836,7 +859,8 @@ class _InfoScreenState extends State<InfoScreen> {
     await doc.update({
       'occupation': occupation.text.trim(),
       'area': areaValue,
-      'religion': region.text.trim(),
+      'state': stateValue,
+      //'region': region.text.trim(),
       'location': value,
       'interest': interest.text.trim(),
       'drink': drink.text.trim(),

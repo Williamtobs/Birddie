@@ -1,12 +1,10 @@
 import 'package:birddie/Constant/validators.dart';
 import 'package:birddie/Services/services.dart';
-import 'package:birddie/UI/InformationScreens/data_screens.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ThirdScreen extends StatefulWidget {
@@ -17,9 +15,10 @@ class ThirdScreen extends StatefulWidget {
 }
 
 class _ThirdScreenState extends State<ThirdScreen> {
-  TextEditingController birthController = TextEditingController();
+  //TextEditingController birthController = TextEditingController();
   TextEditingController workController = TextEditingController();
   TextEditingController name = TextEditingController();
+  String birthController = 'DATE OF BIRDTH';
 
   var setup = FirebaseService();
   var gender = 'Male';
@@ -247,20 +246,40 @@ class _ThirdScreenState extends State<ThirdScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    SizedBox(
-                      width: 270,
-                      height: 43,
-                      child: TextFields(
-                        hintText: 'DATE OF BIRDTH',
-                        fillColor: const Color.fromRGBO(216, 211, 211, 1),
-                        style: GoogleFonts.asap(
+                    GestureDetector(
+                      onTap: (){
+                        DatePicker.showDatePicker(context,
+                            theme: const DatePickerTheme(
+                              cancelStyle : TextStyle(color: Color.fromRGBO(255, 84, 84, 1), fontSize: 14),
+                              doneStyle: TextStyle(color: Color.fromRGBO(255, 84, 84, 1), fontSize: 14),
+                              containerHeight: 210.0,
+                            ),
+                            showTitleActions: true,
+                            minTime: DateTime(1990, 1, 1),
+                            maxTime: DateTime(2022, 12, 31), onConfirm: (date) {
+                              print('confirm $date');
+                              birthController = '${date.year} - ${date.month} - ${date.day}';
+                              setState(() {});
+                            }, currentTime: DateTime.now(), locale: LocaleType.en);
+                      },
+                      child: Container(
+                        width: 270,
+                        height: 43,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+                          color: const Color.fromRGBO(216, 211, 211, 1),
+                          border: Border.all(
+                            color: const Color.fromRGBO(255, 84, 84, 1),
+                            width: 1,
+                          )
+                        ),
+                        child: Text(birthController,
+                          style: GoogleFonts.asap(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
-                            color: const Color.fromRGBO(71, 71, 71, 1)),
-                        validate: validateTextField,
-                        controller: birthController,
-                        inputType: TextInputType.text,
-                        color: const Color.fromRGBO(255, 84, 84, 1),
+                            color: const Color.fromRGBO(71, 71, 71, 1)),),
+
                       ),
                     ),
                     const SizedBox(
@@ -378,7 +397,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
   }
 
   saveDetails() async {
-    setup.userSetup(birthController.text.trim(), workController.text.trim(),
+    setup.userSetup(birthController, workController.text.trim(),
         name.text.trim(), gender, pem);
   }
 }

@@ -238,7 +238,11 @@ class DashBoardScreen extends StatelessWidget {
               height: 45,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(const Matching());
+                  Get.to(SearchCriteria(
+                    title: 'Match Metrix',
+                    category: 'Match Metrix',
+                  ));
+                  //Get.to(const Matching());
                 },
                 child: Text(
                   'Match Metrix',

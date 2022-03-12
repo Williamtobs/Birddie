@@ -1,3 +1,4 @@
+import 'package:birddie/UI/Dashboard/Drawer/side_drawer.dart';
 import 'package:birddie/UI/Dashboard/Events/event_screens.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/tickets.dart';
@@ -27,7 +28,7 @@ class ReviewingMatch extends StatelessWidget {
       review =
           'You have been added to the queue, you will be match within 24hrs, '
           'you will be notified once you have a match, (this is sponsored and recorded)';
-    } else if (category == 'Sponsored Roulette') {
+    } else if (category == 'Instant Roulette') {
       review =
           'You have been added to the queue, your will be match within the next 10mins, '
           'you will be notified once you have a match,';
@@ -48,15 +49,8 @@ class ReviewingMatch extends StatelessWidget {
           print(data);
           return Scaffold(
             backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
+            drawer: SideDrawer(),
             appBar: AppBar(
-              leading: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.menu_outlined,
-                  size: 25,
-                  color: Color.fromRGBO(255, 255, 255, 1),
-                ),
-              ),
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(34),
