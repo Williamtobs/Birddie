@@ -36,9 +36,16 @@ class _UserProfileState extends State<UserProfile> {
   String? videoPath;
   File? _video;
 
+  DocumentReference texts = FirebaseFirestore.instance.collection('ScreensInfo').doc('1MNqJtxHyObzoRs1NIm7');
+  String? text1;
+  //String? text2;
+
   @override
   initState() {
     super.initState;
+    texts.get().then((DocumentSnapshot snapshot){
+      text1 = snapshot['text1'];
+    });
     loadVideo();
   }
 
@@ -195,7 +202,7 @@ class _UserProfileState extends State<UserProfile> {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                'What Is Your Ultimate Goal In Life?',
+                                text1!,
                                 style: GoogleFonts.asap(
                                   fontSize: 14,
                                   fontStyle: FontStyle.italic,

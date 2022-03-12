@@ -35,6 +35,10 @@ class _InfoScreenState extends State<InfoScreen> {
   TextEditingController smoke = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  DocumentReference texts = FirebaseFirestore.instance.collection('ScreensInfo').doc('1MNqJtxHyObzoRs1NIm7');
+  String? answerQuestion;
+  String? text1;
+
   var setup = FirebaseService();
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;
@@ -68,6 +72,10 @@ class _InfoScreenState extends State<InfoScreen> {
   @override
   void initState() {
     super.initState();
+    texts.get().then((DocumentSnapshot snapshot){
+      answerQuestion = snapshot['answer_question'];
+      text1 = snapshot['text1'];
+    });
     // setState(() {
     //   list = setup.fetchLocation(1);
     // });
@@ -218,7 +226,7 @@ class _InfoScreenState extends State<InfoScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'What Is Your Ultimate Goal In Life?',
+                        text1!,
                         style: GoogleFonts.asap(
                           fontSize: 14,
                           fontStyle: FontStyle.italic,
@@ -242,8 +250,7 @@ class _InfoScreenState extends State<InfoScreen> {
                             padding:
                                 const EdgeInsets.only(left: 10.0, right: 10.0),
                             child: Text(
-                              'Answer the question above in a 60 '
-                              'seconds video and upload below',
+                              answerQuestion!,
                               style: GoogleFonts.asap(
                                 fontSize: 12,
                                 fontStyle: FontStyle.italic,
