@@ -1,3 +1,4 @@
+import 'package:birddie/UI/Dashboard/Drawer/side_drawer.dart';
 import 'package:birddie/UI/Dashboard/Matching/matching.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/tickets.dart';
@@ -9,7 +10,6 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../Chats/chats_screen.dart';
-import 'Account/upgrade_account_screen.dart';
 import 'Events/event_screens.dart';
 import 'Matching/search_criteria_screen.dart';
 
@@ -19,18 +19,9 @@ class DashBoardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: SideDrawer(),
       backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Get.to(Chats());
-          },
-          icon: const Icon(
-            Icons.menu_outlined,
-            size: 25,
-            color: Color.fromRGBO(255, 255, 255, 1),
-          ),
-        ),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(34),
@@ -247,7 +238,11 @@ class DashBoardScreen extends StatelessWidget {
               height: 45,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(const Matching());
+                  Get.to(SearchCriteria(
+                    title: 'Match Metrix',
+                    category: 'Match Metrix',
+                  ));
+                  //Get.to(const Matching());
                 },
                 child: Text(
                   'Match Metrix',

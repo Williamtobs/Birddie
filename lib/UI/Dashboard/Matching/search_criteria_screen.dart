@@ -4,13 +4,14 @@ import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+//import 'package:smart_calendar/controller/smart_calendar_controller.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:table_calendar/table_calendar.dart';
 
-import 'matching.dart';
+import '../../Shared/time_dropdown.dart';
 
 class SearchCriteria extends StatefulWidget {
   final String? title;
@@ -24,13 +25,53 @@ class SearchCriteria extends StatefulWidget {
 class _SearchCriteriaState extends State<SearchCriteria> {
   TextEditingController ageFrom = TextEditingController();
   TextEditingController ageTo = TextEditingController();
-  TextEditingController state = TextEditingController();
-  TextEditingController dateSetup = TextEditingController();
   TextEditingController dateFrom = TextEditingController();
   TextEditingController dateTo = TextEditingController();
-  TextEditingController timeFrom = TextEditingController();
-  TextEditingController timeTo = TextEditingController();
+  String? state;
+  TextEditingController dateSetup = TextEditingController();
+  String? timeFrom;
+  String? timeTo;
   TextEditingController spending = TextEditingController();
+  final CalendarFormat _calendarFormat = CalendarFormat.month;
+  //CalendarController _calendarController = new CalendarController();
+  DateTime focusedDay = DateTime.now();
+  DateTime? firstDay;
+  DateTime? lastDay;
+  DateTime? _selectedDay1;
+  DateTime? _selectedDay2;
+
+  calender(BuildContext context, DateTime? _selectedDay){
+    showDialog(context: context, builder: (context){
+      return AlertDialog(
+        content: TableCalendar(
+          onPageChanged: (focusedDay) {
+            // No need to call `setState()` here
+            this.focusedDay = focusedDay;
+          },
+          onDaySelected: (selectedDay, focusedDay) {
+            if (!isSameDay(_selectedDay, selectedDay)) {
+              // Call `setState()` when updating the selected day
+                _selectedDay = selectedDay;
+                this.focusedDay = focusedDay;
+            }
+          },
+          selectedDayPredicate: (day){
+            return isSameDay(_selectedDay, day);
+          },
+          calendarFormat: _calendarFormat,
+          //calendarController: _calendarController,
+           focusedDay: focusedDay, firstDay: DateTime.utc(2010,10,20), lastDay: DateTime.utc(2040,10,20),
+        ),
+        actions: [
+          GestureDetector(
+              onTap: (){
+                Get.back();
+              },
+              child: Text('Close'))
+        ],
+      );
+    });
+  }
 
   String? value;
   String? areaValue;
@@ -38,7 +79,12 @@ class _SearchCriteriaState extends State<SearchCriteria> {
   @override
   void initState() {
     super.initState();
-    state = TextEditingController(text: 'Lagos');
+    FirebaseFirestore.instance
+        .collection('Location')
+        .doc('Axf4eRaHWs4obB6IEwnI')
+        .get();
+    calender;
+    //state = TextEditingController(text: 'Lagos');
   }
 
   @override
@@ -137,7 +183,7 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           height: 3,
                         ),
                         Container(
-                          width: 181,
+                          width: 200,
                           height: 23,
                           decoration: BoxDecoration(
                               borderRadius:
@@ -149,7 +195,7 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               SizedBox(
-                                width: 33,
+                                width: 40,
                                 height: 16,
                                 child: TextField(
                                   controller: ageFrom,
@@ -180,7 +226,7 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                 ),
                               ),
                               SizedBox(
-                                width: 33,
+                                width: 40,
                                 height: 16,
                                 child: TextField(
                                   controller: ageTo,
@@ -219,20 +265,35 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                         const SizedBox(
                           height: 3,
                         ),
-                        SizedBox(
-                          width: 181,
+                        Container(
+                          width: 200,
                           height: 27,
-                          child: TextFields(
-                            controller: state,
-                            //initialValue: 'Lagos',
-                            inputType: TextInputType.text,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                              const BorderRadius.all(Radius.circular(20.0)),
+                              border: Border.all(
+                                color: const Color.fromRGBO(255, 84, 84, 1),
+                                width: 1,
+                              )),
+                          child: DropDownAreaSelect(
+                            //iden: iden,
+                            //color: const Color.fromRGBO(216, 211, 211, 1),
+                            //items: list!,
+                            onChanged: (value) {
+                              setState(
+                                    () {
+                                  state = value as String?;
+                                  print(value);
+                                },
+                              );
+                            },
                             style: GoogleFonts.asap(
-                              fontSize: 15,
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w700,
-                              color: const Color.fromRGBO(255, 84, 84, 1),
-                            ),
-                            color: const Color.fromRGBO(255, 84, 84, 1),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                color: const Color.fromRGBO(71, 71, 71, 1)),
+                            value: state,
+                            //controller: controller,
                           ),
                         ),
                         const SizedBox(
@@ -251,8 +312,9 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           height: 3,
                         ),
                         Container(
-                          width: 181,
+                          width: 200,
                           height: 27,
+                          alignment: Alignment.center,
                           decoration: BoxDecoration(
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(20.0)),
@@ -261,19 +323,22 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                 width: 1,
                               )),
                           child: DropDownLocation(
+                            //iden: iden,
+                            location: state,
+                            //color: const Color.fromRGBO(216, 211, 211, 1),
+                            //items: list!,
                             onChanged: (value) {
                               setState(
-                                () {
+                                    () {
                                   areaValue = value as String?;
                                   print(value);
                                 },
                               );
                             },
                             style: GoogleFonts.asap(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              color: const Color.fromRGBO(255, 84, 84, 1),
-                            ),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                color: const Color.fromRGBO(71, 71, 71, 1)),
                             value: areaValue,
                             //controller: controller,
                           ),
@@ -294,8 +359,9 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           height: 3,
                         ),
                         Container(
-                          width: 181,
+                          width: 200,
                           height: 27,
+                          alignment: Alignment.center,
                           decoration: BoxDecoration(
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(20.0)),
@@ -305,20 +371,19 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                               )),
                           child: DropDown(
                             location: areaValue,
+                            location2: state,
                             onChanged: (value) {
                               setState(
-                                () {
+                                    () {
                                   this.value = value as String;
-                                  //print(value);
                                 },
                               );
                             },
-                            style: GoogleFonts.asap(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              color: const Color.fromRGBO(255, 84, 84, 1),
-                            ),
                             value: value,
+                            style: GoogleFonts.asap(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                color: const Color.fromRGBO(71, 71, 71, 1)),
                           ),
                         ),
                         const SizedBox(
@@ -337,7 +402,7 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           height: 3,
                         ),
                         SizedBox(
-                          width: 181,
+                          width: 200,
                           height: 27,
                           child: TextFields(
                             controller: dateSetup,
@@ -367,7 +432,7 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           height: 3,
                         ),
                         Container(
-                          width: 181,
+                          width: 200,
                           height: 23,
                           decoration: BoxDecoration(
                               borderRadius:
@@ -378,28 +443,52 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
+                        //       GestureDetector(
+                        //   onTap: (){
+                        //     showDialog(
+                        //         context: context, builder: (BuildContext context){
+                        //           return calender(context, _selectedDay1);
+                        //     }
+                        //
+                        //     );
+                        // },
+                        //         child:
                               SizedBox(
-                                width: 33,
+                                width: 38,
                                 height: 16,
-                                child: TextField(
-                                  controller: dateFrom,
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
-                                  style: GoogleFonts.asap(
-                                    fontSize: 15,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color.fromRGBO(255, 84, 84, 1),
-                                  ),
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
+                                  child: TextField(
+                                    controller: dateFrom,
+                                    textAlign: TextAlign.center,
+                                    keyboardType: TextInputType.number,
+                                    style: GoogleFonts.asap(
+                                      fontSize: 15,
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color.fromRGBO(255, 84, 84, 1),
+                                    ),
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                    ),
                                   ),
                                 ),
-                              ),
+                              //),
+                              //   SizedBox(
+                              //     width: 33,
+                              //     height: 16,
+                              //     child: _selectedDay1 == null ?
+                              //     Text(
+                              //         "${_selectedDay1?.day.toString()} - ${_selectedDay1?.month.toString()}" , style: GoogleFonts.asap(
+                              //       fontSize: 15,
+                              //       fontStyle: FontStyle.normal,
+                              //       fontWeight: FontWeight.w700,
+                              //       color: const Color.fromRGBO(255, 84, 84, 1),
+                              //     )) : Text('Empty')
+                              //   ),
+                              // ),
                               Text(
                                 '|',
                                 style: GoogleFonts.asap(
@@ -409,8 +498,18 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                   color: const Color.fromRGBO(255, 84, 84, 1),
                                 ),
                               ),
+                              // GestureDetector(
+                              //   onTap: (){
+                              //     showDialog(
+                              //         context: context, builder: (BuildContext context){
+                              //       return calender(context, _selectedDay2);
+                              //     }
+                              //
+                              //     );
+                              //   },
+                              //   child:
                               SizedBox(
-                                width: 33,
+                                width: 38,
                                 height: 16,
                                 child: TextField(
                                   controller: dateTo,
@@ -430,7 +529,21 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                     disabledBorder: InputBorder.none,
                                   ),
                                 ),
-                              )
+                              ),
+                              //   SizedBox(
+                              //     width: 33,
+                              //     height: 16,
+                              //     child: _selectedDay2 == null ?
+                              //     Text(
+                              //         "${_selectedDay2?.day.toString()} - ${_selectedDay2?.month.toString()}" ?? '', style: GoogleFonts.asap(
+                              //       fontSize: 15,
+                              //       fontStyle: FontStyle.normal,
+                              //       fontWeight: FontWeight.w700,
+                              //       color: const Color.fromRGBO(255, 84, 84, 1),
+                              //     )):
+                              //         Text('Empty')
+                              //   ),
+                              //)
                             ],
                           ),
                         ),
@@ -450,7 +563,7 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           height: 3,
                         ),
                         Container(
-                          width: 181,
+                          width: 200,
                           height: 23,
                           decoration: BoxDecoration(
                               borderRadius:
@@ -461,25 +574,26 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              SizedBox(
-                                width: 33,
-                                height: 16,
-                                child: TextField(
-                                  controller: timeFrom,
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
-                                  style: GoogleFonts.asap(
-                                    fontSize: 15,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color.fromRGBO(255, 84, 84, 1),
-                                  ),
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
+                              Expanded(
+                                child: Container(
+                                  width: 45,
+                                  height: 16,
+                                  alignment: Alignment.center,
+                                  child: DropDownTime(
+                                    style: GoogleFonts.asap(
+                                      fontSize: 15,
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color.fromRGBO(255, 84, 84, 1),
+                                    ),
+                                    value: timeFrom,
+                                    onChanged: (value) {
+                                      setState(
+                                            () {
+                                          timeFrom = value as String;
+                                        },
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
@@ -492,26 +606,45 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                   color: const Color.fromRGBO(255, 84, 84, 1),
                                 ),
                               ),
-                              SizedBox(
-                                width: 33,
-                                height: 16,
-                                child: TextField(
-                                  controller: timeTo,
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
-                                  style: GoogleFonts.asap(
-                                    fontSize: 15,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color.fromRGBO(255, 84, 84, 1),
+                              Expanded(
+                                child: Container(
+                                  width: 45,
+                                  height: 16,
+                                  alignment: Alignment.center,
+                                  child: DropDownTime(
+                                    style: GoogleFonts.asap(
+                                          fontSize: 15,
+                                          fontStyle: FontStyle.normal,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color.fromRGBO(255, 84, 84, 1),
+                                        ),
+                                    value: timeTo,
+                                    onChanged: (value) {
+                                      setState(
+                                            () {
+                                              timeTo = value as String;
+                                        },
+                                      );
+                                    },
                                   ),
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                  ),
+                                  // TextField(
+                                  //   controller: timeTo,
+                                  //   textAlign: TextAlign.center,
+                                  //   keyboardType: TextInputType.number,
+                                  //   style: GoogleFonts.asap(
+                                  //     fontSize: 15,
+                                  //     fontStyle: FontStyle.normal,
+                                  //     fontWeight: FontWeight.w700,
+                                  //     color: const Color.fromRGBO(255, 84, 84, 1),
+                                  //   ),
+                                  //   decoration: const InputDecoration(
+                                  //     border: InputBorder.none,
+                                  //     focusedBorder: InputBorder.none,
+                                  //     enabledBorder: InputBorder.none,
+                                  //     errorBorder: InputBorder.none,
+                                  //     disabledBorder: InputBorder.none,
+                                  //   ),
+                                  // ),
                                 ),
                               )
                             ],
@@ -533,7 +666,7 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           height: 3,
                         ),
                         SizedBox(
-                          width: 181,
+                          width: 200,
                           height: 27,
                           child: TextFields(
                             fillColor: const Color.fromRGBO(239, 239, 239, 1),
@@ -595,18 +728,25 @@ class _SearchCriteriaState extends State<SearchCriteria> {
     await doc.set({
       'age_from': int.parse(ageFrom.text.trim()),
       'age_to': int.parse(ageTo.text.trim()),
-      'state': state.text.trim(),
+      'state': state,
       'date_location': areaValue,
       'date_area': value,
       'date_setup': dateSetup.text.trim(),
       'date': '${dateFrom.text.trim()} - ${dateTo.text.trim()}',
-      'time': '${timeFrom.text.trim()} - ${timeTo.text.trim()}',
+      'time': '$timeFrom - $timeTo',
       "spending_guage": spending.text.trim(),
     }).then((value) {
       print("Match form Added");
-      Get.to(Search(
+      Get.to(
+          Search(
         category: category,
       ));
-    }).catchError((error) => print("Failed to add user: $error"));
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Failed to add use case: $error"),
+        backgroundColor: Colors.red.shade300,
+      ));
+      print("Failed to add user: $error");
+    });
   }
 }

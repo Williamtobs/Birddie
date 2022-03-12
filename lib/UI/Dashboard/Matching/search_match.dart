@@ -22,10 +22,9 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 11),
+      duration: const Duration(seconds: 10),
     );
     Timer(const Duration(seconds: 10), () {
       controller!.repeat();
@@ -35,7 +34,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       Get.to(ReviewingMatch(
         category: widget.category,
       ));
-      controller!.repeat();
+      super.initState();
+      //controller!.repeat();
     });
     // Timer(
     //     const Duration(seconds: 10),
@@ -113,7 +113,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                   );
                 }),
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 30),
           Center(
             child: Text('Analyzing your data',
                 style: GoogleFonts.asap(
