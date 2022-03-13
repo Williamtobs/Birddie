@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key, required this.category}) : super(key: key);
@@ -29,11 +30,14 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     Timer(const Duration(seconds: 10), () {
       controller!.repeat();
       if (widget.category == 'Match Metrix') {
-        Get.to(const Matching());
+        goTo(const Matching());
       }
-      Get.to(ReviewingMatch(
+      goTo(ReviewingMatch(
         category: widget.category,
       ));
+      // Get.to(ReviewingMatch(
+      //   category: widget.category,
+      // ));
       super.initState();
       //controller!.repeat();
     });
@@ -42,7 +46,12 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     //     () =>
     //Get.to(const Matching());
   }
-
+  goTo(Widget dir) async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString('category', widget.category);
+    pref.setBool('page', true);
+    Get.offAll(dir);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -3,6 +3,7 @@ class Users {
   String? dateOfBirth;
   String? occupation;
   String? name;
+  String? age;
   String? gender;
   bool? perm;
 
@@ -11,6 +12,7 @@ class Users {
     this.dateOfBirth,
     this.occupation,
     this.name,
+    this.age,
     this.gender,
     this.perm,
   });
@@ -20,6 +22,7 @@ class Users {
     dateOfBirth = json['dateOfBirth'];
     occupation = json['occupation'];
     name = json['name'];
+    age = json['age'];
     gender = json['gendeer'];
     perm = json['perm'];
   }
@@ -30,6 +33,7 @@ class Users {
     data['dateOfBirth'] = dateOfBirth;
     data['occupation'] = occupation;
     data['name'] = name;
+    data['age'] = age;
     data['gender'] = gender;
     data['perm'] = perm;
     return data;

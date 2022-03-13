@@ -46,7 +46,7 @@ class _UserProfileState extends State<UserProfile> {
     texts.get().then((DocumentSnapshot snapshot){
       text1 = snapshot['text1'];
     });
-    loadVideo();
+    //loadVideo();
   }
 
   Future loadVideo() async {

@@ -15,8 +15,10 @@ class DropDownTime extends StatelessWidget{
     return Container(
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
+          //itemHeight: ,
           //borderRadius: BorderRadius.zero,
           value: value,
+          icon: const Visibility( visible: false, child: Icon(Icons.arrow_downward)),
           items: Time.time.map((String value) {
             return DropdownMenuItem<String>(
               value: value,

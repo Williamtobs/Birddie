@@ -11,24 +11,36 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'match_details_screen.dart';
 
-class ReviewingMatch extends StatelessWidget {
+class ReviewingMatch extends StatefulWidget {
   final String category;
   ReviewingMatch({Key? key, required this.category}) : super(key: key);
 
+  @override
+  State<ReviewingMatch> createState() => _ReviewingMatchState();
+}
+
+class _ReviewingMatchState extends State<ReviewingMatch> {
   var uid;
+
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   String? review;
 
   void reviewTime() {
-    if (category == 'Russian Roulette') {
+    if (widget.category == 'Russian Roulette') {
       review =
           'You have been added to the queue, you will be notified once you have a match';
-    } else if (category == 'Sponsored Roulette') {
+    } else if (widget.category == 'Sponsored Roulette') {
       review =
           'You have been added to the queue, you will be match within 24hrs, '
           'you will be notified once you have a match, (this is sponsored and recorded)';
-    } else if (category == 'Instant Roulette') {
+    } else if (widget.category == 'Instant Roulette') {
       review =
           'You have been added to the queue, your will be match within the next 10mins, '
           'you will be notified once you have a match,';
@@ -40,7 +52,7 @@ class ReviewingMatch extends StatelessWidget {
     reviewTime();
     uid = auth.currentUser!.uid;
     var matchDetails =
-        FirebaseFirestore.instance.collection(category).doc(uid).get();
+        FirebaseFirestore.instance.collection(widget.category).doc(uid).get();
     return FutureBuilder<DocumentSnapshot>(
         future: matchDetails,
         builder: (context, snapshot) {
@@ -199,7 +211,7 @@ class ReviewingMatch extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Text(
-                                    category,
+                                    widget.category,
                                     style: GoogleFonts.asap(
                                       fontSize: 13,
                                       fontStyle: FontStyle.normal,

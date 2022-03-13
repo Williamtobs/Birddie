@@ -7,14 +7,33 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 
-class EventScreen extends StatelessWidget {
+class EventScreen extends StatefulWidget {
   final String docId;
   const EventScreen({Key? key, required this.docId}) : super(key: key);
 
   @override
+  State<EventScreen> createState() => _EventScreenState();
+}
+
+class _EventScreenState extends State<EventScreen> {
+
+  DocumentReference texts = FirebaseFirestore.instance.collection('ScreensInfo').doc('1MNqJtxHyObzoRs1NIm7');
+  String? ticket_message;
+
+  @override
+  void initState() {
+    texts.get().then((DocumentSnapshot snapshot) {
+      ticket_message = snapshot['ticket_message'];
+      //slot = snapshot['slot'];
+    });
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var events =
-        FirebaseFirestore.instance.collection('Events').doc(docId).get();
+        FirebaseFirestore.instance.collection('Events').doc(widget.docId).get();
     return FutureBuilder<DocumentSnapshot>(
         future: events,
         builder: (context, snapshot) {
@@ -112,8 +131,7 @@ class EventScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                'Come And Relive Those Good Times, Hang With Old '
-                                'Friends And Make New One ',
+                                ticket_message!,
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.asap(
                                   fontSize: 9,

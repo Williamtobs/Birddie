@@ -188,6 +188,7 @@ class FirebaseService {
     String dateOfBirth,
     String occupation,
     String name,
+    String age,
     String gender,
     bool perm,
   ) async {
@@ -201,6 +202,7 @@ class FirebaseService {
         dateOfBirth: dateOfBirth,
         occupation: occupation,
         name: name,
+        age: age,
         gender: gender,
         perm: perm,
       );

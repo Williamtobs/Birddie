@@ -64,7 +64,7 @@ class Matching extends StatelessWidget {
             )),
       ),
       body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("Match").snapshots(),
+          stream: FirebaseFirestore.instance.collection("user").snapshots(),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.data?.docs.length == 0) {
               return const Center(child: Text("No available match yet"));
@@ -96,9 +96,9 @@ class Matching extends StatelessWidget {
                                   snapshot.data.docs[index];
                               return MatchCard(
                                 name: list.data()!['name'],
-                                job: list.data()!['job'],
+                                job: list.data()!['occupation'],
                                 location: list.data()!['location'],
-                                matchCriteria: list.data()!['matchCriteria'],
+                                //matchCriteria: list.data()!['matchCriteria'],
                                 age: list.data()!['age'],
                                 video: list.data()!['videoUrl'],
                               );

@@ -135,7 +135,7 @@ class _MatchCardState extends State<MatchCard> {
                     const SizedBox(
                       width: 5,
                     ),
-                    Text(widget.matchCriteria!,
+                    Text('widget.matchCriteria!',
                         style: GoogleFonts.asap(
                           fontSize: 20,
                           fontStyle: FontStyle.normal,

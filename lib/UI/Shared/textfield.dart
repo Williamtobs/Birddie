@@ -10,6 +10,7 @@ class TextFields extends StatelessWidget {
   final Color? color;
   final String? initialValue;
   final Color? fillColor;
+  final bool? read;
   final Function? functionValidate;
   final String? Function(String?)? validate;
 
@@ -23,12 +24,13 @@ class TextFields extends StatelessWidget {
       this.fillColor,
       this.functionValidate,
       this.validate,
-      this.initialValue})
+      this.initialValue, this.read})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: read ?? false,
         controller: controller,
         textAlign: TextAlign.center,
         keyboardType: inputType,
