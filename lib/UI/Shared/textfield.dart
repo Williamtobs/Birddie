@@ -24,13 +24,14 @@ class TextFields extends StatelessWidget {
       this.fillColor,
       this.functionValidate,
       this.validate,
-      this.initialValue, this.read})
+      this.initialValue,
+      this.read})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      readOnly: read ?? false,
+        readOnly: read ?? false,
         controller: controller,
         textAlign: TextAlign.center,
         keyboardType: inputType,

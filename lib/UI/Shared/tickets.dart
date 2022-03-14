@@ -28,19 +28,12 @@ class Tickets extends StatefulWidget {
 class _TicketsState extends State<Tickets> {
   var service = FirebaseService();
 
-  DocumentReference texts = FirebaseFirestore.instance.collection('ScreensInfo').doc('1MNqJtxHyObzoRs1NIm7');
-  String? ticket;
-  String? slot;
-
   @override
   void initState() {
-    texts.get().then((DocumentSnapshot snapshot){
-      ticket = snapshot['ticket'];
-      slot = snapshot['slot'];
-    });
     // TODO: implement initState
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(

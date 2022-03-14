@@ -18,28 +18,31 @@ class SideDrawer extends StatefulWidget {
 
 class _SideDrawerState extends State<SideDrawer> {
   var service = FirebaseService();
-  FirebaseAuth auth = FirebaseAuth.instance;
+  //FirebaseAuth auth = FirebaseAuth.instance;
   var uid;
   var imgUrl;
+  var user;
 
   @override
   void initState() {
+    user = fetchData();
     // TODO: implement initState
     super.initState();
   }
 
+  Future<DocumentSnapshot<Object?>> fetchData() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    var uid = auth.currentUser!.uid;
+    return FirebaseFirestore.instance.collection('users').doc(uid).get();
+  }
+
   @override
   Widget build(BuildContext context) {
-    uid = auth.currentUser!.uid;
-    var users = FirebaseFirestore.instance.collection('users').doc(uid).get();
     return FutureBuilder<DocumentSnapshot>(
-        future: users,
+        future: user,
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          Map<String, dynamic> data =
-              snapshot.data!.data() as Map<String, dynamic>;
-          imgUrl = data['imagePath'];
           print(imgUrl);
-          if (imgUrl == null) {
+          if (snapshot.data == null) {
             return Drawer(
               backgroundColor: const Color.fromRGBO(252, 197, 197, 1),
               child: Center(
@@ -182,6 +185,9 @@ class _SideDrawerState extends State<SideDrawer> {
               ),
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
+            Map<String, dynamic> data =
+                snapshot.data!.data() as Map<String, dynamic>;
+            imgUrl = data['imagePath'];
             print(imgUrl);
             return Drawer(
               backgroundColor: const Color.fromRGBO(252, 197, 197, 1),
@@ -322,6 +328,12 @@ class _SideDrawerState extends State<SideDrawer> {
                   ],
                 ),
               ),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting ||
+              imgUrl == null) {
+            return const Drawer(
+              backgroundColor: Color.fromRGBO(252, 197, 197, 1),
+              child: Center(child: CircularProgressIndicator()),
             );
           } else {
             return const Drawer(

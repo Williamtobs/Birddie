@@ -30,28 +30,25 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     Timer(const Duration(seconds: 10), () {
       controller!.repeat();
       if (widget.category == 'Match Metrix') {
-        goTo(const Matching());
+        Get.offAll(Matching(category: widget.category));
+        //goTo(const Matching());
+      } else {
+        goTo(ReviewingMatch(
+          category: widget.category,
+        ));
       }
-      goTo(ReviewingMatch(
-        category: widget.category,
-      ));
-      // Get.to(ReviewingMatch(
-      //   category: widget.category,
-      // ));
       super.initState();
       //controller!.repeat();
     });
-    // Timer(
-    //     const Duration(seconds: 10),
-    //     () =>
-    //Get.to(const Matching());
   }
-  goTo(Widget dir) async{
+
+  goTo(Widget dir) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setString('category', widget.category);
     pref.setBool('page', true);
     Get.offAll(dir);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

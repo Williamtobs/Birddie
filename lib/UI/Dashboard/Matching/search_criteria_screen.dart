@@ -35,7 +35,9 @@ class _SearchCriteriaState extends State<SearchCriteria> {
   TextEditingController spending = TextEditingController();
   String dateFrom = 'Date';
   String dateTo = 'Date';
+  String? _date;
   String? value;
+  DateTime date = DateTime.now();
   String? areaValue;
   DocumentReference texts = FirebaseFirestore.instance
       .collection('Amount')
@@ -44,15 +46,24 @@ class _SearchCriteriaState extends State<SearchCriteria> {
 
   @override
   void initState() {
-    texts.get().then((DocumentSnapshot snapshot) {
-      amount = snapshot[widget.category!];
-      //slot = snapshot['slot'];
-    });
+    getAmount();
+    // texts.get().then((DocumentSnapshot snapshot) {
+    //   amount = snapshot[widget.category!];
+    //   //slot = snapshot['slot'];
+    //   print(amount);
+    // });
     spending = TextEditingController(text: 'NN');
     super.initState();
-
     //calender;
     //state = TextEditingController(text: 'Lagos');
+  }
+
+  Future getAmount() async {
+    await texts.get().then((snapshot) {
+      amount = snapshot[widget.category!];
+      //slot = snapshot['slot'];
+      print(amount);
+    });
   }
 
   @override
@@ -433,7 +444,10 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                     print('confirm $date');
                                     dateFrom =
                                         '${date.year} - ${date.month} - ${date.day}';
-                                    setState(() {});
+                                    setState(() {
+                                      this.date = date;
+                                      _date = date.day.toString();
+                                    });
                                   },
                                       currentTime: DateTime.now(),
                                       locale: LocaleType.en);
@@ -477,7 +491,7 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                         containerHeight: 210.0,
                                       ),
                                       showTitleActions: true,
-                                      minTime: DateTime.now(),
+                                      minTime: date,
                                       maxTime: DateTime(2028, 12, 31),
                                       onConfirm: (date) {
                                     print('confirm $date');
@@ -678,8 +692,10 @@ class _SearchCriteriaState extends State<SearchCriteria> {
       'state': state,
       'date_location': areaValue,
       'date_area': value,
+      'datePicked': '$dateFrom - $dateTo',
       'date_setup': dateSetup.text.trim(),
-      'date': '$dateFrom - $dateTo',
+      'date': _date,
+      'start_time': timeFrom,
       'time': '$timeFrom - $timeTo',
       "spending_guage": spending.text.trim(),
     }).then((value) {
