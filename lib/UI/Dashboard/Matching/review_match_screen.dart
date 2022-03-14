@@ -11,24 +11,36 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'match_details_screen.dart';
 
-class ReviewingMatch extends StatelessWidget {
+class ReviewingMatch extends StatefulWidget {
   final String category;
   ReviewingMatch({Key? key, required this.category}) : super(key: key);
 
+  @override
+  State<ReviewingMatch> createState() => _ReviewingMatchState();
+}
+
+class _ReviewingMatchState extends State<ReviewingMatch> {
   var uid;
+
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   String? review;
 
   void reviewTime() {
-    if (category == 'Russian Roulette') {
+    if (widget.category == 'Russian Roulette') {
       review =
           'You have been added to the queue, you will be notified once you have a match';
-    } else if (category == 'Sponsored Roulette') {
+    } else if (widget.category == 'Sponsored Roulette') {
       review =
           'You have been added to the queue, you will be match within 24hrs, '
           'you will be notified once you have a match, (this is sponsored and recorded)';
-    } else if (category == 'Instant Roulette') {
+    } else if (widget.category == 'Instant Roulette') {
       review =
           'You have been added to the queue, your will be match within the next 10mins, '
           'you will be notified once you have a match,';
@@ -40,147 +52,182 @@ class ReviewingMatch extends StatelessWidget {
     reviewTime();
     uid = auth.currentUser!.uid;
     var matchDetails =
-        FirebaseFirestore.instance.collection(category).doc(uid).get();
+        FirebaseFirestore.instance.collection(widget.category).doc(uid).get();
     return FutureBuilder<DocumentSnapshot>(
         future: matchDetails,
         builder: (context, snapshot) {
-          Map<String, dynamic> data =
-              snapshot.data!.data() as Map<String, dynamic>;
-          print(data);
-          return Scaffold(
-            backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
-            drawer: SideDrawer(),
-            appBar: AppBar(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(34),
-                    bottomRight: Radius.circular(34)),
-              ),
-              flexibleSpace: Container(
-                decoration: const BoxDecoration(
+          if (snapshot.data == null) {
+            return Scaffold(
+              backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
+              drawer: SideDrawer(),
+              appBar: AppBar(
+                shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(34),
                       bottomRight: Radius.circular(34)),
-                  image: DecorationImage(
-                    image: AssetImage(appbar),
-                    fit: BoxFit.fill,
-                  ),
                 ),
-                child: Container(
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(34),
-                            bottomRight: Radius.circular(34)),
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromRGBO(255, 84, 84, 1),
-                            Colors.transparent
-                          ],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                        ))),
+                flexibleSpace: Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(34),
+                        bottomRight: Radius.circular(34)),
+                    image: DecorationImage(
+                      image: AssetImage(appbar),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  child: Container(
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(34),
+                              bottomRight: Radius.circular(34)),
+                          gradient: LinearGradient(
+                            colors: [
+                              Color.fromRGBO(255, 84, 84, 1),
+                              Colors.transparent
+                            ],
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                          ))),
+                ),
               ),
-            ),
-            body: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 30),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Up coming events',
-                      style: GoogleFonts.asap(
-                        fontSize: 12,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w400,
-                        color: const Color.fromRGBO(71, 71, 71, 1),
-                      ),
+              body: const Center(child: CircularProgressIndicator()),
+            );
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            Map<String, dynamic> data =
+                snapshot.data!.data() as Map<String, dynamic>;
+            print(data);
+            return Scaffold(
+              backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
+              drawer: SideDrawer(),
+              appBar: AppBar(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(34),
+                      bottomRight: Radius.circular(34)),
+                ),
+                flexibleSpace: Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(34),
+                        bottomRight: Radius.circular(34)),
+                    image: DecorationImage(
+                      image: AssetImage(appbar),
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection("Events")
-                            .snapshots(),
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Text("No available Ticket");
-                          } else if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else {
-                            return SizedBox(
-                              width: 315,
-                              height: 140,
-                              child: ListView.builder(
-                                  physics: const BouncingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: snapshot.data?.docs.length,
-                                  shrinkWrap: true,
-                                  itemBuilder: (BuildContext ctxt, int index) {
-                                    DocumentSnapshot<Map<String, dynamic>>
-                                        list = snapshot.data.docs[index];
-                                    print(list.id);
-                                    print(list.data()!['name']);
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Get.to(EventScreen(
-                                          docId: list.id,
-                                        ));
-                                      },
-                                      child: Tickets(
-                                        name: list.data()!['name'],
-                                        location: list.data()!['location'],
-                                        date: list.data()!['date'],
-                                        time: list.data()!['time'],
-                                        price_slang:
-                                            list.data()!['price_slang'],
-                                        slots_book: list.data()!['slot_book'],
-                                      ),
-                                    );
-                                  }),
-                            );
-                          }
-                        }),
-                  ),
-                  const SizedBox(height: 30),
-                  Center(
-                    child: Text(
-                      'Under review...',
-                      style: GoogleFonts.asap(
-                        fontSize: 36,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w400,
-                        color: const Color.fromRGBO(58, 89, 136, 1),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: SizedBox(
-                      width: 278,
+                  child: Container(
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(34),
+                              bottomRight: Radius.circular(34)),
+                          gradient: LinearGradient(
+                            colors: [
+                              Color.fromRGBO(255, 84, 84, 1),
+                              Colors.transparent
+                            ],
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                          ))),
+                ),
+              ),
+              body: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 30),
+                    Align(
+                      alignment: Alignment.centerLeft,
                       child: Text(
-                        '$review',
-                        textAlign: TextAlign.center,
+                        'Up coming events',
                         style: GoogleFonts.asap(
-                          fontSize: 14,
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400,
+                          color: const Color.fromRGBO(71, 71, 71, 1),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection("Events")
+                              .snapshots(),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Text("No available Ticket");
+                            } else if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            } else {
+                              return SizedBox(
+                                width: 315,
+                                height: 140,
+                                child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: snapshot.data?.docs.length,
+                                    shrinkWrap: true,
+                                    itemBuilder:
+                                        (BuildContext ctxt, int index) {
+                                      DocumentSnapshot<Map<String, dynamic>>
+                                          list = snapshot.data.docs[index];
+                                      print(list.id);
+                                      print(list.data()!['name']);
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Get.to(EventScreen(
+                                            docId: list.id,
+                                          ));
+                                        },
+                                        child: Tickets(
+                                          name: list.data()!['name'],
+                                          location: list.data()!['location'],
+                                          date: list.data()!['date'],
+                                          time: list.data()!['time'],
+                                          price_slang:
+                                              list.data()!['price_slang'],
+                                          slots_book: list.data()!['slot_book'],
+                                        ),
+                                      );
+                                    }),
+                              );
+                            }
+                          }),
+                    ),
+                    const SizedBox(height: 30),
+                    Center(
+                      child: Text(
+                        'Under review...',
+                        style: GoogleFonts.asap(
+                          fontSize: 36,
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.w400,
                           color: const Color.fromRGBO(58, 89, 136, 1),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 30),
-                  GestureDetector(
-                    onTap: () {
-                      Get.to(const MatchDetails());
-                    },
-                    child: SizedBox(
+                    const SizedBox(height: 10),
+                    Center(
+                      child: SizedBox(
+                        width: 278,
+                        child: Text(
+                          '$review',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.asap(
+                            fontSize: 14,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w400,
+                            color: const Color.fromRGBO(58, 89, 136, 1),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    SizedBox(
                       height: 217,
                       width: 358,
                       child: Stack(
@@ -199,7 +246,7 @@ class ReviewingMatch extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Text(
-                                    category,
+                                    widget.category,
                                     style: GoogleFonts.asap(
                                       fontSize: 13,
                                       fontStyle: FontStyle.normal,
@@ -482,12 +529,49 @@ class ReviewingMatch extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            return Scaffold(
+              backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
+              drawer: SideDrawer(),
+              appBar: AppBar(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(34),
+                      bottomRight: Radius.circular(34)),
+                ),
+                flexibleSpace: Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(34),
+                        bottomRight: Radius.circular(34)),
+                    image: DecorationImage(
+                      image: AssetImage(appbar),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  child: Container(
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(34),
+                              bottomRight: Radius.circular(34)),
+                          gradient: LinearGradient(
+                            colors: [
+                              Color.fromRGBO(255, 84, 84, 1),
+                              Colors.transparent
+                            ],
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                          ))),
+                ),
+              ),
+              body: const Center(child: CircularProgressIndicator()),
+            );
+          }
         });
   }
 }

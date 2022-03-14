@@ -10,3 +10,4 @@ const String attendee = "assets/attendee.png";
 const String match = "assets/matching.png";
 const String backGround = "assets/background.png";
 const String avatar = "assets/avatar.png";
+const String profile = "assets/profile.png";

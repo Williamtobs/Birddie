@@ -1,15 +1,16 @@
 import 'package:birddie/UI/Dashboard/Matching/search_match.dart';
+import 'package:birddie/UI/Shared/age_dropdown.dart';
 import 'package:birddie/UI/Shared/dropdown_field.dart';
 import 'package:birddie/UI/Shared/images.dart';
 import 'package:birddie/UI/Shared/textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 //import 'package:smart_calendar/controller/smart_calendar_controller.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 import '../../Shared/time_dropdown.dart';
 
@@ -23,68 +24,46 @@ class SearchCriteria extends StatefulWidget {
 }
 
 class _SearchCriteriaState extends State<SearchCriteria> {
-  TextEditingController ageFrom = TextEditingController();
-  TextEditingController ageTo = TextEditingController();
-  TextEditingController dateFrom = TextEditingController();
-  TextEditingController dateTo = TextEditingController();
+  String? ageFrom;
+  String? ageTo;
+  //TextEditingController dateFrom = TextEditingController();
+  //TextEditingController dateTo = TextEditingController();
   String? state;
   TextEditingController dateSetup = TextEditingController();
   String? timeFrom;
   String? timeTo;
   TextEditingController spending = TextEditingController();
-  final CalendarFormat _calendarFormat = CalendarFormat.month;
-  //CalendarController _calendarController = new CalendarController();
-  DateTime focusedDay = DateTime.now();
-  DateTime? firstDay;
-  DateTime? lastDay;
-  DateTime? _selectedDay1;
-  DateTime? _selectedDay2;
-
-  calender(BuildContext context, DateTime? _selectedDay){
-    showDialog(context: context, builder: (context){
-      return AlertDialog(
-        content: TableCalendar(
-          onPageChanged: (focusedDay) {
-            // No need to call `setState()` here
-            this.focusedDay = focusedDay;
-          },
-          onDaySelected: (selectedDay, focusedDay) {
-            if (!isSameDay(_selectedDay, selectedDay)) {
-              // Call `setState()` when updating the selected day
-                _selectedDay = selectedDay;
-                this.focusedDay = focusedDay;
-            }
-          },
-          selectedDayPredicate: (day){
-            return isSameDay(_selectedDay, day);
-          },
-          calendarFormat: _calendarFormat,
-          //calendarController: _calendarController,
-           focusedDay: focusedDay, firstDay: DateTime.utc(2010,10,20), lastDay: DateTime.utc(2040,10,20),
-        ),
-        actions: [
-          GestureDetector(
-              onTap: (){
-                Get.back();
-              },
-              child: Text('Close'))
-        ],
-      );
-    });
-  }
-
+  String dateFrom = 'Date';
+  String dateTo = 'Date';
+  String? _date;
   String? value;
+  DateTime date = DateTime.now();
   String? areaValue;
+  DocumentReference texts = FirebaseFirestore.instance
+      .collection('Amount')
+      .doc('OR4WNPg6xIWQ2CHC1nx7');
+  String? amount;
 
   @override
   void initState() {
+    getAmount();
+    // texts.get().then((DocumentSnapshot snapshot) {
+    //   amount = snapshot[widget.category!];
+    //   //slot = snapshot['slot'];
+    //   print(amount);
+    // });
+    spending = TextEditingController(text: 'NN');
     super.initState();
-    FirebaseFirestore.instance
-        .collection('Location')
-        .doc('Axf4eRaHWs4obB6IEwnI')
-        .get();
-    calender;
+    //calender;
     //state = TextEditingController(text: 'Lagos');
+  }
+
+  Future getAmount() async {
+    await texts.get().then((snapshot) {
+      amount = snapshot[widget.category!];
+      //slot = snapshot['slot'];
+      print(amount);
+    });
   }
 
   @override
@@ -194,25 +173,27 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              SizedBox(
-                                width: 40,
-                                height: 16,
-                                child: TextField(
-                                  controller: ageFrom,
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
-                                  style: GoogleFonts.asap(
-                                    fontSize: 15,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color.fromRGBO(255, 84, 84, 1),
-                                  ),
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
+                              Expanded(
+                                child: Container(
+                                  width: 45,
+                                  height: 16,
+                                  alignment: Alignment.center,
+                                  child: DropDownAge(
+                                    style: GoogleFonts.asap(
+                                      fontSize: 15,
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w700,
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
+                                    ),
+                                    value: ageFrom,
+                                    onChanged: (value) {
+                                      setState(
+                                        () {
+                                          ageFrom = value as String;
+                                        },
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
@@ -225,28 +206,30 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                   color: const Color.fromRGBO(255, 84, 84, 1),
                                 ),
                               ),
-                              SizedBox(
-                                width: 40,
-                                height: 16,
-                                child: TextField(
-                                  controller: ageTo,
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
-                                  style: GoogleFonts.asap(
-                                    fontSize: 15,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color.fromRGBO(255, 84, 84, 1),
-                                  ),
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
+                              Expanded(
+                                child: Container(
+                                  width: 45,
+                                  height: 16,
+                                  alignment: Alignment.center,
+                                  child: DropDownAge(
+                                    style: GoogleFonts.asap(
+                                      fontSize: 15,
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w700,
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
+                                    ),
+                                    value: ageTo,
+                                    onChanged: (value) {
+                                      setState(
+                                        () {
+                                          ageTo = value as String;
+                                        },
+                                      );
+                                    },
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -271,18 +254,15 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                               borderRadius:
-                              const BorderRadius.all(Radius.circular(20.0)),
+                                  const BorderRadius.all(Radius.circular(20.0)),
                               border: Border.all(
                                 color: const Color.fromRGBO(255, 84, 84, 1),
                                 width: 1,
                               )),
                           child: DropDownAreaSelect(
-                            //iden: iden,
-                            //color: const Color.fromRGBO(216, 211, 211, 1),
-                            //items: list!,
                             onChanged: (value) {
                               setState(
-                                    () {
+                                () {
                                   state = value as String?;
                                   print(value);
                                 },
@@ -329,7 +309,7 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                             //items: list!,
                             onChanged: (value) {
                               setState(
-                                    () {
+                                () {
                                   areaValue = value as String?;
                                   print(value);
                                 },
@@ -374,7 +354,7 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                             location2: state,
                             onChanged: (value) {
                               setState(
-                                    () {
+                                () {
                                   this.value = value as String;
                                 },
                               );
@@ -441,54 +421,52 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                 color: const Color.fromRGBO(255, 84, 84, 1),
                               )),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                        //       GestureDetector(
-                        //   onTap: (){
-                        //     showDialog(
-                        //         context: context, builder: (BuildContext context){
-                        //           return calender(context, _selectedDay1);
-                        //     }
-                        //
-                        //     );
-                        // },
-                        //         child:
-                              SizedBox(
-                                width: 38,
-                                height: 16,
-                                  child: TextField(
-                                    controller: dateFrom,
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
+                              GestureDetector(
+                                onTap: () {
+                                  DatePicker.showDatePicker(context,
+                                      theme: const DatePickerTheme(
+                                        cancelStyle: TextStyle(
+                                            color:
+                                                Color.fromRGBO(255, 84, 84, 1),
+                                            fontSize: 14),
+                                        doneStyle: TextStyle(
+                                            color:
+                                                Color.fromRGBO(255, 84, 84, 1),
+                                            fontSize: 14),
+                                        containerHeight: 210.0,
+                                      ),
+                                      showTitleActions: true,
+                                      minTime: DateTime.now(),
+                                      maxTime: DateTime(2028, 12, 31),
+                                      onConfirm: (date) {
+                                    print('confirm $date');
+                                    dateFrom =
+                                        '${date.year} - ${date.month} - ${date.day}';
+                                    setState(() {
+                                      this.date = date;
+                                      _date = date.day.toString();
+                                    });
+                                  },
+                                      currentTime: DateTime.now(),
+                                      locale: LocaleType.en);
+                                },
+                                child: Container(
+                                  width: 60,
+                                  height: 16,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    dateFrom,
                                     style: GoogleFonts.asap(
-                                      fontSize: 15,
-                                      fontStyle: FontStyle.normal,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color.fromRGBO(255, 84, 84, 1),
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w400,
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
                                     ),
                                   ),
                                 ),
-                              //),
-                              //   SizedBox(
-                              //     width: 33,
-                              //     height: 16,
-                              //     child: _selectedDay1 == null ?
-                              //     Text(
-                              //         "${_selectedDay1?.day.toString()} - ${_selectedDay1?.month.toString()}" , style: GoogleFonts.asap(
-                              //       fontSize: 15,
-                              //       fontStyle: FontStyle.normal,
-                              //       fontWeight: FontWeight.w700,
-                              //       color: const Color.fromRGBO(255, 84, 84, 1),
-                              //     )) : Text('Empty')
-                              //   ),
-                              // ),
+                              ),
                               Text(
                                 '|',
                                 style: GoogleFonts.asap(
@@ -498,52 +476,47 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                   color: const Color.fromRGBO(255, 84, 84, 1),
                                 ),
                               ),
-                              // GestureDetector(
-                              //   onTap: (){
-                              //     showDialog(
-                              //         context: context, builder: (BuildContext context){
-                              //       return calender(context, _selectedDay2);
-                              //     }
-                              //
-                              //     );
-                              //   },
-                              //   child:
-                              SizedBox(
-                                width: 38,
-                                height: 16,
-                                child: TextField(
-                                  controller: dateTo,
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
-                                  style: GoogleFonts.asap(
-                                    fontSize: 15,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color.fromRGBO(255, 84, 84, 1),
-                                  ),
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
+                              GestureDetector(
+                                onTap: () {
+                                  DatePicker.showDatePicker(context,
+                                      theme: const DatePickerTheme(
+                                        cancelStyle: TextStyle(
+                                            color:
+                                                Color.fromRGBO(255, 84, 84, 1),
+                                            fontSize: 14),
+                                        doneStyle: TextStyle(
+                                            color:
+                                                Color.fromRGBO(255, 84, 84, 1),
+                                            fontSize: 14),
+                                        containerHeight: 210.0,
+                                      ),
+                                      showTitleActions: true,
+                                      minTime: date,
+                                      maxTime: DateTime(2028, 12, 31),
+                                      onConfirm: (date) {
+                                    print('confirm $date');
+                                    dateTo =
+                                        '${date.year} - ${date.month} - ${date.day}';
+                                    setState(() {});
+                                  },
+                                      currentTime: DateTime.now(),
+                                      locale: LocaleType.en);
+                                },
+                                child: Container(
+                                  width: 60,
+                                  height: 16,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    dateTo,
+                                    style: GoogleFonts.asap(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w400,
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
+                                    ),
                                   ),
                                 ),
                               ),
-                              //   SizedBox(
-                              //     width: 33,
-                              //     height: 16,
-                              //     child: _selectedDay2 == null ?
-                              //     Text(
-                              //         "${_selectedDay2?.day.toString()} - ${_selectedDay2?.month.toString()}" ?? '', style: GoogleFonts.asap(
-                              //       fontSize: 15,
-                              //       fontStyle: FontStyle.normal,
-                              //       fontWeight: FontWeight.w700,
-                              //       color: const Color.fromRGBO(255, 84, 84, 1),
-                              //     )):
-                              //         Text('Empty')
-                              //   ),
-                              //)
                             ],
                           ),
                         ),
@@ -584,12 +557,13 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                       fontSize: 15,
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w700,
-                                      color: const Color.fromRGBO(255, 84, 84, 1),
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
                                     ),
                                     value: timeFrom,
                                     onChanged: (value) {
                                       setState(
-                                            () {
+                                        () {
                                           timeFrom = value as String;
                                         },
                                       );
@@ -613,38 +587,21 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                                   alignment: Alignment.center,
                                   child: DropDownTime(
                                     style: GoogleFonts.asap(
-                                          fontSize: 15,
-                                          fontStyle: FontStyle.normal,
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color.fromRGBO(255, 84, 84, 1),
-                                        ),
+                                      fontSize: 15,
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w700,
+                                      color:
+                                          const Color.fromRGBO(255, 84, 84, 1),
+                                    ),
                                     value: timeTo,
                                     onChanged: (value) {
                                       setState(
-                                            () {
-                                              timeTo = value as String;
+                                        () {
+                                          timeTo = value as String;
                                         },
                                       );
                                     },
                                   ),
-                                  // TextField(
-                                  //   controller: timeTo,
-                                  //   textAlign: TextAlign.center,
-                                  //   keyboardType: TextInputType.number,
-                                  //   style: GoogleFonts.asap(
-                                  //     fontSize: 15,
-                                  //     fontStyle: FontStyle.normal,
-                                  //     fontWeight: FontWeight.w700,
-                                  //     color: const Color.fromRGBO(255, 84, 84, 1),
-                                  //   ),
-                                  //   decoration: const InputDecoration(
-                                  //     border: InputBorder.none,
-                                  //     focusedBorder: InputBorder.none,
-                                  //     enabledBorder: InputBorder.none,
-                                  //     errorBorder: InputBorder.none,
-                                  //     disabledBorder: InputBorder.none,
-                                  //   ),
-                                  // ),
                                 ),
                               )
                             ],
@@ -668,18 +625,22 @@ class _SearchCriteriaState extends State<SearchCriteria> {
                         SizedBox(
                           width: 200,
                           height: 27,
-                          child: TextFields(
-                            fillColor: const Color.fromRGBO(239, 239, 239, 1),
-                            controller: spending,
-                            inputType: TextInputType.text,
-                            style: GoogleFonts.asap(
-                              fontSize: 15,
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w700,
-                              color: const Color.fromRGBO(255, 84, 84, 1),
-                            ),
-                            color: const Color.fromRGBO(255, 84, 84, 1),
-                          ),
+                          child: spending == null
+                              ? const CircularProgressIndicator()
+                              : TextFields(
+                                  read: true,
+                                  fillColor:
+                                      const Color.fromRGBO(239, 239, 239, 1),
+                                  controller: spending,
+                                  inputType: TextInputType.text,
+                                  style: GoogleFonts.asap(
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color.fromRGBO(255, 84, 84, 1),
+                                  ),
+                                  color: const Color.fromRGBO(255, 84, 84, 1),
+                                ),
                         ),
                         const SizedBox(
                           height: 30,
@@ -726,19 +687,20 @@ class _SearchCriteriaState extends State<SearchCriteria> {
     CollectionReference users = FirebaseFirestore.instance.collection(category);
     var doc = users.doc(uid);
     await doc.set({
-      'age_from': int.parse(ageFrom.text.trim()),
-      'age_to': int.parse(ageTo.text.trim()),
+      'age_from': int.parse(ageFrom!),
+      'age_to': int.parse(ageTo!),
       'state': state,
       'date_location': areaValue,
       'date_area': value,
+      'datePicked': '$dateFrom - $dateTo',
       'date_setup': dateSetup.text.trim(),
-      'date': '${dateFrom.text.trim()} - ${dateTo.text.trim()}',
+      'date': _date,
+      'start_time': timeFrom,
       'time': '$timeFrom - $timeTo',
       "spending_guage": spending.text.trim(),
     }).then((value) {
       print("Match form Added");
-      Get.to(
-          Search(
+      Get.to(Search(
         category: category,
       ));
     }).catchError((error) {

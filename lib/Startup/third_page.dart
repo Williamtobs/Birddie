@@ -19,6 +19,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
   TextEditingController workController = TextEditingController();
   TextEditingController name = TextEditingController();
   String birthController = 'DATE OF BIRDTH';
+  String? age;
 
   var setup = FirebaseService();
   var gender = 'Male';
@@ -256,10 +257,12 @@ class _ThirdScreenState extends State<ThirdScreen> {
                             ),
                             showTitleActions: true,
                             minTime: DateTime(1990, 1, 1),
-                            maxTime: DateTime(2022, 12, 31), onConfirm: (date) {
+                            maxTime: DateTime(2005, 12, 31), onConfirm: (date) {
                               print('confirm $date');
                               birthController = '${date.year} - ${date.month} - ${date.day}';
-                              setState(() {});
+                              setState(() {
+                                age = '${date.year} - ${2022}';
+                              });
                             }, currentTime: DateTime.now(), locale: LocaleType.en);
                       },
                       child: Container(
@@ -279,7 +282,6 @@ class _ThirdScreenState extends State<ThirdScreen> {
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             color: const Color.fromRGBO(71, 71, 71, 1)),),
-
                       ),
                     ),
                     const SizedBox(
@@ -398,6 +400,6 @@ class _ThirdScreenState extends State<ThirdScreen> {
 
   saveDetails() async {
     setup.userSetup(birthController, workController.text.trim(),
-        name.text.trim(), gender, pem);
+        name.text.trim(), age!, gender, pem,);
   }
 }

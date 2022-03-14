@@ -37,7 +37,7 @@ class _InfoScreenState extends State<InfoScreen> {
 
   var setup = FirebaseService();
   VideoPlayerController? _controller;
-  Future<void>? _initializeVideoPlayerFuture;
+  //Future<void>? _initializeVideoPlayerFuture;
 
   getNextPage() {
     //if ((_formKey.currentState!.validate())) {
@@ -48,7 +48,6 @@ class _InfoScreenState extends State<InfoScreen> {
 
   File? _image;
   File? _video;
-  var iden;
   String? value;
   String? areaValue;
   String? stateValue;
@@ -59,18 +58,15 @@ class _InfoScreenState extends State<InfoScreen> {
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
 
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
-    // setState(() {
-    //   list = setup.fetchLocation(1);
-    // });
   }
 
   Future getImage() async {
@@ -88,23 +84,28 @@ class _InfoScreenState extends State<InfoScreen> {
         print('No image selected.');
       }
     });
-    imagePath = await setup.uploadImage(_image!);
-    print(imagePath);
+    if (_image != null) {
+        imagePath = await setup.uploadImage(_image!);
+        print(imagePath);
+    }
   }
 
   Future getVideo() async {
     var pickedFile = (await picker.pickVideo(
         source: ImageSource.gallery, maxDuration: const Duration(seconds: 60)));
-    setState(() {
+
       if (pickedFile != null) {
         _video = File(pickedFile.path);
-        _controller = VideoPlayerController.file(_video!);
-        _initializeVideoPlayerFuture = _controller?.initialize();
-        _controller?.setLooping(true);
+        _controller = VideoPlayerController.file(_video!)..initialize().then((value) {
+          setState(() {
+
+          });
+        });
+        //_initializeVideoPlayerFuture = _controller!.initialize();
+        //_controller!.setLooping(true);
       } else {
         print('No Video selected.');
       }
-    });
     videoPath = await setup.uploadVideo(_video!);
     print(videoPath);
   }
@@ -228,7 +229,7 @@ class _InfoScreenState extends State<InfoScreen> {
                       ),
                       const SizedBox(height: 10),
                       Visibility(
-                        visible: _controller == null,
+                        visible: _video == null,
                         child: Container(
                           width: MediaQuery.of(context).size.width,
                           height: 38,
@@ -242,8 +243,7 @@ class _InfoScreenState extends State<InfoScreen> {
                             padding:
                                 const EdgeInsets.only(left: 10.0, right: 10.0),
                             child: Text(
-                              'Answer the question above in a 60 '
-                              'seconds video and upload below',
+                              'Answer the question above in a 60 seconds video and upload below',
                               style: GoogleFonts.asap(
                                 fontSize: 12,
                                 fontStyle: FontStyle.italic,
@@ -255,7 +255,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         ),
                       ),
                       Visibility(
-                          visible: _controller == null,
+                          visible: _video == null,
                           child: const SizedBox(height: 10)),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -274,28 +274,33 @@ class _InfoScreenState extends State<InfoScreen> {
                                   ),
                                   borderRadius: const BorderRadius.all(
                                       Radius.circular(14))),
-                              child: _controller != null
-                                  ? FutureBuilder(
-                                      future: _initializeVideoPlayerFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.done) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: AspectRatio(
-                                              aspectRatio: _controller!
-                                                  .value.aspectRatio,
-                                              // Use the VideoPlayer widget to display the video.
-                                              child: VideoPlayer(_controller!),
-                                            ),
-                                          );
-                                        } else {
-                                          return const Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        }
-                                      },
-                                    )
+                              child: _video != null ?
+                              _controller!.value.isInitialized ? AspectRatio(aspectRatio: _controller!.value.aspectRatio,
+                                  child: VideoPlayer(_controller!)
+                              ) : const Center(
+                                  child:
+                                  CircularProgressIndicator())
+                                  // ? FutureBuilder(
+                                  //     future: _initializeVideoPlayerFuture,
+                                  //     builder: (context, snapshot) {
+                                  //       if (snapshot.connectionState ==
+                                  //           ConnectionState.done) {
+                                  //         return Padding(
+                                  //           padding: const EdgeInsets.all(5.0),
+                                  //           child: AspectRatio(
+                                  //             aspectRatio: _controller!
+                                  //                 .value.aspectRatio,
+                                  //             // Use the VideoPlayer widget to display the video.
+                                  //             child: VideoPlayer(_controller!),
+                                  //           ),
+                                  //         );
+                                  //       } else {
+                                  //         return const Center(
+                                  //             child:
+                                  //                 CircularProgressIndicator());
+                                  //       }
+                                  //     },
+                                  //   )
                                   : Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -375,7 +380,7 @@ class _InfoScreenState extends State<InfoScreen> {
                       ),
                       const SizedBox(height: 5),
                       Visibility(
-                          visible: _controller != null && _image != null,
+                          visible: _video != null && _image != null,
                           child: SizedBox(
                             height: 28,
                             width: 172,
@@ -406,7 +411,7 @@ class _InfoScreenState extends State<InfoScreen> {
                             ),
                           )),
                       Visibility(
-                          visible: _controller != null && _image != null,
+                          visible: _video != null && _image != null,
                           child: const SizedBox(height: 10)),
                     ],
                   ),
@@ -491,13 +496,12 @@ class _InfoScreenState extends State<InfoScreen> {
                                 width: 1,
                               )),
                           child: DropDownAreaSelect(
-                            iden: iden,
                             //color: const Color.fromRGBO(216, 211, 211, 1),
                             //items: list!,
                             onChanged: (value) {
                               setState(
                                 () {
-                                  stateValue = value as String?;
+                                  stateValue = value as String;
                                   print(value);
                                 },
                               );
@@ -549,14 +553,13 @@ class _InfoScreenState extends State<InfoScreen> {
                                 width: 1,
                               )),
                           child: DropDownLocation(
-                            iden: iden,
                               location: stateValue,
                             //color: const Color.fromRGBO(216, 211, 211, 1),
                             //items: list!,
                             onChanged: (value) {
                               setState(
                                     () {
-                                  areaValue = value as String?;
+                                  areaValue = value as String;
                                   print(value);
                                 },
                               );
@@ -784,8 +787,8 @@ class _InfoScreenState extends State<InfoScreen> {
   }
 
   Widget _showDialog(BuildContext context) {
-    print(value);
-    print(areaValue);
+    // print(value);
+    // print(areaValue);
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(27.0),
@@ -795,63 +798,75 @@ class _InfoScreenState extends State<InfoScreen> {
       child: SizedBox(
         height: 370,
         width: 306,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(warning, height: 100, width: 100),
-            const SizedBox(height: 20),
-            Text('Profile Picture & video',
-                style: GoogleFonts.asap(
-                    fontSize: 15,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w400,
-                    color: const Color.fromRGBO(58, 89, 136, 1))),
-            const SizedBox(height: 20),
-            Text('You failed verification.',
-                style: GoogleFonts.asap(
-                    fontSize: 13,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w500,
-                    color: const Color.fromRGBO(255, 84, 84, 1))),
-            Text(
-                'Please, upload a clear picutre and video showing '
-                'your face alone answering the '
-                'question & try again',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.asap(
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w400,
-                    color: const Color.fromRGBO(111, 111, 111, 1))),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 45,
-              width: 181,
-              child: ElevatedButton(
-                onPressed: () {
-                  //getNextPage();
-                },
-                child: Text('CLOSE',
-                    style: GoogleFonts.asap(
-                        fontSize: 15,
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w400,
-                        color: const Color.fromRGBO(255, 238, 84, 1))),
-                style: ElevatedButton.styleFrom(
-                  primary: const Color.fromRGBO(255, 84, 84, 1),
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+        child: Padding(
+          padding: const EdgeInsets.all(13.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(warning, height: 100, width: 100),
+              const SizedBox(height: 20),
+              Text('Profile Picture & video',
+                  style: GoogleFonts.asap(
+                      fontSize: 15,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w400,
+                      color: const Color.fromRGBO(58, 89, 136, 1))),
+              const SizedBox(height: 20),
+              Text('You failed verification.',
+                  style: GoogleFonts.asap(
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
+                      color: const Color.fromRGBO(255, 84, 84, 1))),
+              Text(
+                  'Please, upload a clear picture and video showing your face alone answering the question & try again',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.asap(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w400,
+                      color: const Color.fromRGBO(111, 111, 111, 1))),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 45,
+                width: 181,
+                child: ElevatedButton(
+                  onPressed: () {
+                    //getNextPage();
+                  },
+                  child: Text('CLOSE',
+                      style: GoogleFonts.asap(
+                          fontSize: 15,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w400,
+                          color: const Color.fromRGBO(255, 238, 84, 1))),
+                  style: ElevatedButton.styleFrom(
+                    primary: const Color.fromRGBO(255, 84, 84, 1),
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
-
+  // Future match() async {
+  //   var uid = _auth.currentUser?.uid;
+  //   var coll = FirebaseFirestore.instance.collection("Match").doc(uid);
+  //   await coll.update({
+  //     'imagePath': imagePath,
+  //     'image': _image.toString(),
+  //     "video": _video.toString(),
+  //     'videoPath': videoPath,
+  //     'occupation': occupation.text.trim(),
+  //     'state': stateValue,
+  //   });
+  // }
   Future addDetails() async {
     var uid = _auth.currentUser?.uid;
     CollectionReference users = FirebaseFirestore.instance.collection('users');

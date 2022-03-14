@@ -1,11 +1,12 @@
 import 'package:birddie/Services/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'images.dart';
 
-class Tickets extends StatelessWidget {
+class Tickets extends StatefulWidget {
   final String? name;
   final String? location;
   final String? date, price_slang, time;
@@ -20,7 +21,19 @@ class Tickets extends StatelessWidget {
       this.slots_book})
       : super(key: key);
 
+  @override
+  State<Tickets> createState() => _TicketsState();
+}
+
+class _TicketsState extends State<Tickets> {
   var service = FirebaseService();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,7 +52,7 @@ class Tickets extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name!,
+                    Text(widget.name!,
                         style: GoogleFonts.asap(
                           fontSize: 15,
                           fontStyle: FontStyle.normal,
@@ -67,7 +80,7 @@ class Tickets extends StatelessWidget {
                 const SizedBox(
                   width: 3,
                 ),
-                Text('|  $location',
+                Text('|  ${widget.location}',
                     style: GoogleFonts.asap(
                       fontSize: 12,
                       fontStyle: FontStyle.normal,
@@ -75,7 +88,7 @@ class Tickets extends StatelessWidget {
                       color: const Color.fromRGBO(255, 255, 255, 1),
                     )),
                 const Spacer(),
-                Text("N${price_slang!}",
+                Text("N${widget.price_slang!}",
                     style: GoogleFonts.asap(
                       fontSize: 43,
                       fontStyle: FontStyle.normal,
@@ -116,7 +129,7 @@ class Tickets extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                         color: const Color.fromRGBO(255, 255, 255, 1),
                       )),
-                  Text(slots_book.toString(),
+                  Text(widget.slots_book.toString(),
                       style: GoogleFonts.asap(
                         fontSize: 20,
                         fontStyle: FontStyle.normal,
@@ -126,14 +139,14 @@ class Tickets extends StatelessWidget {
                 ]),
                 const Spacer(),
                 Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Text(date!,
+                  Text(widget.date!,
                       style: GoogleFonts.asap(
                         fontSize: 13,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w600,
                         color: const Color.fromRGBO(255, 255, 255, 1),
                       )),
-                  Text(time!,
+                  Text(widget.time!,
                       style: GoogleFonts.asap(
                         fontSize: 13,
                         fontStyle: FontStyle.normal,

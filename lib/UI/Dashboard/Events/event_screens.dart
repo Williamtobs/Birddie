@@ -7,14 +7,34 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 
-class EventScreen extends StatelessWidget {
+class EventScreen extends StatefulWidget {
   final String docId;
   const EventScreen({Key? key, required this.docId}) : super(key: key);
 
   @override
+  State<EventScreen> createState() => _EventScreenState();
+}
+
+class _EventScreenState extends State<EventScreen> {
+  DocumentReference texts = FirebaseFirestore.instance
+      .collection('ScreensInfo')
+      .doc('1MNqJtxHyObzoRs1NIm7');
+  String? ticket_message;
+
+  @override
+  void initState() {
+    texts.get().then((DocumentSnapshot snapshot) {
+      ticket_message = snapshot['ticket_message'];
+      //slot = snapshot['slot'];
+    });
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var events =
-        FirebaseFirestore.instance.collection('Events').doc(docId).get();
+        FirebaseFirestore.instance.collection('Events').doc(widget.docId).get();
     return FutureBuilder<DocumentSnapshot>(
         future: events,
         builder: (context, snapshot) {
@@ -112,8 +132,7 @@ class EventScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                'Come And Relive Those Good Times, Hang With Old '
-                                'Friends And Make New One ',
+                                ticket_message!,
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.asap(
                                   fontSize: 9,
@@ -126,164 +145,44 @@ class EventScreen extends StatelessWidget {
                               Container(
                                 width: 200,
                                 height: 20,
-                                //alignment: Alignment.center,
-                                child: ListView.builder(
-                                    physics: const BouncingScrollPhysics(),
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: data['activities'].length,
-                                    shrinkWrap: true,
-                                    itemBuilder:
-                                        (BuildContext ctxt, int index) {
-                                      return Container(
-                                          margin: const EdgeInsets.all(2),
-                                          padding: const EdgeInsets.all(2),
-                                          alignment: Alignment.center,
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(30)),
-                                            color: Color.fromRGBO(
-                                                216, 211, 211, 1),
-                                          ),
-                                          child: Text(
-                                            data['activities'][index],
-                                            style: GoogleFonts.asap(
-                                              fontSize: 13,
-                                              fontStyle: FontStyle.italic,
-                                              fontWeight: FontWeight.w400,
-                                              color: const Color.fromRGBO(
-                                                  71, 71, 71, 1),
-                                            ),
-                                          ));
-                                    }),
-                                // child: Column(
-                                //     mainAxisAlignment: MainAxisAlignment.center,
-                                //     children: [
-                                //       Row(
-                                //           mainAxisAlignment:
-                                //               MainAxisAlignment.spaceBetween,
-                                //           children: [
-                                //             Container(
-                                //                 alignment: Alignment.center,
-                                //                 decoration: const BoxDecoration(
-                                //                   borderRadius:
-                                //                       BorderRadius.all(
-                                //                           Radius.circular(30)),
-                                //                   color: Color.fromRGBO(
-                                //                       216, 211, 211, 1),
-                                //                 ),
-                                //                 child: Text(
-                                //                   data['activities'][0],
-                                //                   style: GoogleFonts.asap(
-                                //                     fontSize: 13,
-                                //                     fontStyle: FontStyle.italic,
-                                //                     fontWeight: FontWeight.w400,
-                                //                     color: const Color.fromRGBO(
-                                //                         71, 71, 71, 1),
-                                //                   ),
-                                //                 )),
-                                //             Container(
-                                //                 alignment: Alignment.center,
-                                //                 decoration: const BoxDecoration(
-                                //                   borderRadius:
-                                //                       BorderRadius.all(
-                                //                           Radius.circular(30)),
-                                //                   color: Color.fromRGBO(
-                                //                       216, 211, 211, 1),
-                                //                 ),
-                                //                 child: Text(
-                                //                   'Drinks',
-                                //                   style: GoogleFonts.asap(
-                                //                     fontSize: 13,
-                                //                     fontStyle: FontStyle.italic,
-                                //                     fontWeight: FontWeight.w400,
-                                //                     color: const Color.fromRGBO(
-                                //                         71, 71, 71, 1),
-                                //                   ),
-                                //                 )),
-                                //             Container(
-                                //                 alignment: Alignment.center,
-                                //                 decoration: const BoxDecoration(
-                                //                   borderRadius:
-                                //                       BorderRadius.all(
-                                //                           Radius.circular(30)),
-                                //                   color: Color.fromRGBO(
-                                //                       216, 211, 211, 1),
-                                //                 ),
-                                //                 child: Text(
-                                //                   'Games',
-                                //                   style: GoogleFonts.asap(
-                                //                     fontSize: 13,
-                                //                     fontStyle: FontStyle.italic,
-                                //                     fontWeight: FontWeight.w400,
-                                //                     color: const Color.fromRGBO(
-                                //                         71, 71, 71, 1),
-                                //                   ),
-                                //                 )),
-                                //             Container(
-                                //                 alignment: Alignment.center,
-                                //                 decoration: const BoxDecoration(
-                                //                   borderRadius:
-                                //                       BorderRadius.all(
-                                //                           Radius.circular(30)),
-                                //                   color: Color.fromRGBO(
-                                //                       216, 211, 211, 1),
-                                //                 ),
-                                //                 child: Text(
-                                //                   'Music',
-                                //                   style: GoogleFonts.asap(
-                                //                     fontSize: 13,
-                                //                     fontStyle: FontStyle.italic,
-                                //                     fontWeight: FontWeight.w400,
-                                //                     color: const Color.fromRGBO(
-                                //                         71, 71, 71, 1),
-                                //                   ),
-                                //                 )),
-                                //           ]),
-                                //       const SizedBox(height: 5),
-                                //       Row(
-                                //           mainAxisAlignment:
-                                //               MainAxisAlignment.spaceAround,
-                                //           children: [
-                                //             Container(
-                                //                 alignment: Alignment.center,
-                                //                 decoration: const BoxDecoration(
-                                //                   borderRadius:
-                                //                       BorderRadius.all(
-                                //                           Radius.circular(30)),
-                                //                   color: Color.fromRGBO(
-                                //                       216, 211, 211, 1),
-                                //                 ),
-                                //                 child: Text(
-                                //                   'Networking',
-                                //                   style: GoogleFonts.asap(
-                                //                     fontSize: 13,
-                                //                     fontStyle: FontStyle.italic,
-                                //                     fontWeight: FontWeight.w400,
-                                //                     color: const Color.fromRGBO(
-                                //                         71, 71, 71, 1),
-                                //                   ),
-                                //                 )),
-                                //             Container(
-                                //                 alignment: Alignment.center,
-                                //                 decoration: const BoxDecoration(
-                                //                   borderRadius:
-                                //                       BorderRadius.all(
-                                //                           Radius.circular(30)),
-                                //                   color: Color.fromRGBO(
-                                //                       216, 211, 211, 1),
-                                //                 ),
-                                //                 child: Text(
-                                //                   'Talks',
-                                //                   style: GoogleFonts.asap(
-                                //                     fontSize: 13,
-                                //                     fontStyle: FontStyle.italic,
-                                //                     fontWeight: FontWeight.w400,
-                                //                     color: const Color.fromRGBO(
-                                //                         71, 71, 71, 1),
-                                //                   ),
-                                //                 )),
-                                //           ])
-                                //     ]),
+                                alignment: Alignment.center,
+                                child: Flexible(
+                                  child: Wrap(
+                                    children: [
+                                      ListView.builder(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: data['activities'].length,
+                                          shrinkWrap: true,
+                                          itemBuilder:
+                                              (BuildContext ctxt, int index) {
+                                            return Container(
+                                                margin: const EdgeInsets.all(2),
+                                                padding:
+                                                    const EdgeInsets.all(2),
+                                                alignment: Alignment.center,
+                                                decoration: const BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(30)),
+                                                  color: Color.fromRGBO(
+                                                      216, 211, 211, 1),
+                                                ),
+                                                child: Text(
+                                                  data['activities'][index],
+                                                  style: GoogleFonts.asap(
+                                                    fontSize: 13,
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: const Color.fromRGBO(
+                                                        71, 71, 71, 1),
+                                                  ),
+                                                ));
+                                          }),
+                                    ],
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 30),
                               const Divider(

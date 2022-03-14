@@ -156,6 +156,15 @@ class _SecondPageState extends State<SecondPage> {
       ),
     );
   }
+  var data = FirebaseFirestore.instance;
+  
+  userDataExist(String uid) async{
+    var user = data.collection('users').doc(uid);
+    user.get().then((value) {
+      value.exists ? Get.to(const  DashBoardScreen()) :
+      Get.to(const ThirdScreen());
+    });
+}
 
   signInWithPhoneNumber() async {
     try {
@@ -169,7 +178,8 @@ class _SecondPageState extends State<SecondPage> {
         content: Text("Successfully signed in UID: ${user!.uid}"),
         backgroundColor: Colors.green.shade300,
       ));
-      Get.to(const ThirdScreen());
+      userDataExist(user!.uid);
+      //Get.to(const ThirdScreen());
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Failed to sign in: " + e.toString()),

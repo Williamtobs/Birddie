@@ -22,7 +22,7 @@ class DropDown extends StatefulWidget {
       this.items,
       this.value,
       this.location,
-        this.location2,
+      this.location2,
       this.color,
       this.fillColor,
       this.onChanged,
@@ -47,6 +47,8 @@ class _DropDownState extends State<DropDown> {
             //print(newList);
             return DropdownButtonHideUnderline(
               child: DropdownButton(
+                icon: const Visibility(
+                    visible: false, child: Icon(Icons.arrow_downward)),
                 style: widget.style,
                 value: widget.value,
                 items: newList
@@ -67,14 +69,15 @@ class _DropDownState extends State<DropDown> {
   }
 
   fetct() async {
-      await FirebaseFirestore.instance
-          .collection('Location')
-          .doc('Axf4eRaHWs4obB6IEwnI')
-          .get()
-          .then((ds) {
-        newList = ds.data()!['States']['Lagos'][widget.location] as List<dynamic>;
-        print(newList);
-      });
+    await FirebaseFirestore.instance
+        .collection('Location')
+        .doc('Axf4eRaHWs4obB6IEwnI')
+        .get()
+        .then((ds) {
+      newList = ds.data()!['States'][widget.location2][widget.location]
+          as List<dynamic>;
+      print(newList);
+    });
   }
 }
 
@@ -94,8 +97,7 @@ class DropDownLocation extends StatefulWidget {
       this.items,
       this.value,
       this.onChanged,
-        this.iden,
-        this.location,
+      this.location,
       this.color,
       this.fillColor,
       this.style})
@@ -117,6 +119,8 @@ class _DropDownStateLocation extends State<DropDownLocation> {
             print(newList);
             return DropdownButtonHideUnderline(
               child: DropdownButton(
+                icon: const Visibility(
+                    visible: false, child: Icon(Icons.arrow_downward)),
                 style: widget.style,
                 value: widget.value,
                 items: newList
@@ -133,16 +137,17 @@ class _DropDownStateLocation extends State<DropDownLocation> {
           }
         });
   }
+
   fetct() async {
-      await FirebaseFirestore.instance
-          .collection('Location')
-          .doc('Axf4eRaHWs4obB6IEwnI')
-          .get()
-          .then((ds) {
-        newList = ds.data()!['States']['Lagos'].keys.toList();
-        //newList = ds.data()!['Lagos'] as List<dynamic>;
-        print(newList);
-      });
+    await FirebaseFirestore.instance
+        .collection('Location')
+        .doc('Axf4eRaHWs4obB6IEwnI')
+        .get()
+        .then((ds) {
+      newList = ds.data()!['States'][widget.location].keys.toList();
+      //newList = ds.data()!['Lagos'] as List<dynamic>;
+      print(newList);
+    });
   }
 }
 
@@ -152,18 +157,17 @@ class DropDownAreaSelect extends StatefulWidget {
   String? value;
   final Color? color;
   final Color? fillColor;
-  var iden;
+
   void Function(Object?)? onChanged;
   final TextStyle? style;
 
   DropDownAreaSelect(
       {Key? key,
-        this.iden,
-        this.value,
-        this.onChanged,
-        this.color,
-        this.fillColor,
-        this.style})
+      this.value,
+      this.onChanged,
+      this.color,
+      this.fillColor,
+      this.style})
       : super(key: key);
 
   @override
@@ -174,14 +178,23 @@ class _DropDownAreaSelect extends State<DropDownAreaSelect> {
   List<dynamic> newList = [];
 
   @override
+  void initState() {
+    fetch();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: fetct(),
+        future: fetch(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             print(newList);
             return DropdownButtonHideUnderline(
               child: DropdownButton(
+                icon: const Visibility(
+                    visible: false, child: Icon(Icons.arrow_downward)),
                 style: widget.style,
                 value: widget.value,
                 items: newList
@@ -199,16 +212,14 @@ class _DropDownAreaSelect extends State<DropDownAreaSelect> {
         });
   }
 
-  fetct() async {
+  fetch() async {
     await FirebaseFirestore.instance
         .collection('Location')
         .doc('Axf4eRaHWs4obB6IEwnI')
         .get()
         .then((ds) {
-          //print(ds.data()!['States']);
-
-      newList = ds.data()!['States'].keys.toList();
-      widget.iden = newList;
+      //print(ds.data()!['States']);
+      newList = ds.data()!['States']?.keys.toList();
       print(newList);
     });
   }
