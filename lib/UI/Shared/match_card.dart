@@ -2,6 +2,7 @@ import 'package:birddie/UI/Dashboard/Matching/match_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 class MatchCard extends StatefulWidget {
@@ -58,7 +59,7 @@ class _MatchCardState extends State<MatchCard> {
   Widget build(BuildContext context) {
     loadVideo();
     return Padding(
-      padding: const EdgeInsets.all(40.0),
+      padding: const EdgeInsets.all(20.0),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         width: MediaQuery.of(context).size.width,
@@ -166,7 +167,7 @@ class _MatchCardState extends State<MatchCard> {
                         height: 18,
                         child: ElevatedButton(
                           onPressed: () {
-                            Get.to(MatchDetails(category: widget.category));
+                            goTo();
                             //Get.to(const Search());
                           },
                           child: Text(
@@ -194,5 +195,12 @@ class _MatchCardState extends State<MatchCard> {
         ),
       ),
     );
+  }
+
+  goTo() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString('category', widget.category!);
+    pref.setBool('page', true);
+    Get.offAll(MatchDetails(category: widget.category));
   }
 }

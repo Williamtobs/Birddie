@@ -4,6 +4,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Main/main_screen.dart';
+import 'UI/Dashboard/Matching/match_details_screen.dart';
 import 'UI/Dashboard/Matching/review_match_screen.dart';
 
 Future<void> main() async {
@@ -12,7 +13,10 @@ Future<void> main() async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   var state = pref.getBool('page');
   var cat = pref.getString('category');
-  runApp(MyApp(state: state, category: cat,));
+  runApp(MyApp(
+    state: state,
+    category: cat,
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -24,9 +28,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Birddie',
+        title: 'Birddie',
         debugShowCheckedModeBanner: false,
-        home: state == null && category == null ? const MainScreen() : ReviewingMatch(category: category,)
-    );
+        home: state == null && category == null
+            ? const MainScreen()
+            : category == 'Match Metrix'
+                ? MatchDetails(
+                    category: category,
+                  )
+                : ReviewingMatch(
+                    category: category,
+                  ));
   }
 }
